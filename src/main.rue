@@ -1,0 +1,6 @@
+Interface {
+    new UIElement({
+        tag: "main"
+        content: "Map Explorer"
+    })
+}

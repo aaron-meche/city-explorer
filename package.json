@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Rue-powered Street View exploration app with automatic road driving.",
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "node builder.js",
     "dev": "npm run build && node scripts/serve.mjs",
     "start": "npm run dev",
     "check": "npm run build"
