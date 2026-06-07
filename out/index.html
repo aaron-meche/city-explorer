@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Explorer</title>
+<style>
+:root{
+	--bg: #eef2f0;
+	--bg-dark: #111719;
+	--panel: #fbfcfa;
+	--panel-strong: #ffffff;
+	--ink: #172023;
+	--muted: #617074;
+	--soft: #dbe4e0;
+	--line: rgba(23, 32, 35, 0.12);
+	--line-strong: rgba(23, 32, 35, 0.22);
+	--accent: #1f8f6a;
+	--accent-2: #2c7be5;
+	--accent-soft: rgba(31, 143, 106, 0.12);
+	--warning: #c77700;
+	--danger: #b84a4a;
+	--shadow: 0 18px 44px rgba(21, 30, 33, 0.13);
+}
+*{
+	box-sizing: border-box;
+}
+html{
+	min-height: 100%;
+}
+body{
+	margin: 0;
+	min-height: 100vh;
+	background: var(--bg);
+	color: var(--ink);
+	font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+button{
+	font: inherit;
+	border: 0;
+}
+input{
+	font: inherit;
+}
+select{
+	font: inherit;
+}
+textarea{
+	font: inherit;
+}
+.app-shell{
+	min-height: 100vh;
+	display: grid;
+	grid-template-rows: auto minmax(0, 1fr);
+}
+.topbar{
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.85rem 1rem;
+	background: rgba(251, 252, 250, 0.92);
+	border-bottom: solid 1px var(--line);
+	backdrop-filter: blur(18px);
+}
+.brand{
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	min-width: 0;
+}
+.brand-mark{
+	width: 2.1rem;
+	height: 2.1rem;
+	border-radius: 0.45rem;
+	background: linear-gradient(135deg, var(--accent), var(--accent-2));
+	position: relative;
+	overflow: hidden;
+}
+.brand-mark:after{
+	content: "";
+	position: absolute;
+	inset: 0.36rem 0.66rem;
+	border-left: solid 2px rgba(255, 255, 255, 0.78);
+	border-right: solid 2px rgba(255, 255, 255, 0.78);
+	transform: skewX(-16deg);
+}
+.brand-title{
+	display: grid;
+	gap: 0.08rem;
+}
+.brand-title strong{
+	font-size: 1.02rem;
+	line-height: 1.1;
+}
+.brand-title span{
+	color: var(--muted);
+	font-size: 0.78rem;
+	line-height: 1.2;
+}
+.status-chip{
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-height: 2rem;
+	padding: 0 0.72rem;
+	border: solid 1px var(--line);
+	border-radius: 0.45rem;
+	background: var(--panel);
+	color: var(--muted);
+	font-size: 0.82rem;
+	font-weight: 650;
+	white-space: nowrap;
+}
+.status-dot{
+	width: 0.48rem;
+	height: 0.48rem;
+	border-radius: 999px;
+	background: var(--accent);
+}
+.workspace{
+	min-height: 0;
+	display: grid;
+	grid-template-columns: 19rem minmax(0, 1fr) 18rem;
+	gap: 0;
+}
+.rail{
+	min-height: 0;
+	overflow: auto;
+	background: var(--panel);
+	border-right: solid 1px var(--line);
+}
+.rail.right{
+	border-right: 0;
+	border-left: solid 1px var(--line);
+}
+.rail-inner{
+	display: grid;
+	gap: 1rem;
+	padding: 1rem;
+}
+.section{
+	display: grid;
+	gap: 0.65rem;
+}
+.section-title{
+	color: var(--muted);
+	font-size: 0.72rem;
+	font-weight: 800;
+	letter-spacing: 0;
+	text-transform: uppercase;
+}
+.field{
+	display: grid;
+	gap: 0.38rem;
+}
+.field label{
+	color: var(--muted);
+	font-size: 0.78rem;
+	font-weight: 700;
+}
+.textarea{
+	width: 100%;
+	min-height: 2.45rem;
+	border: solid 1px var(--line);
+	border-radius: 0.45rem;
+	background: var(--panel-strong);
+	color: var(--ink);
+	padding: 0 0.7rem;
+	outline: none;
+	min-height: 5.2rem;
+	resize: vertical;
+	padding: 0.65rem 0.7rem;
+	line-height: 1.45;
+}
+.input:focus{
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.select:focus{
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.textarea:focus{
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.button-row{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 0.5rem;
+}
+.button{
+	min-height: 2.45rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.45rem;
+	padding: 0 0.8rem;
+	border-radius: 0.45rem;
+	background: var(--ink);
+	color: white;
+	font-size: 0.86rem;
+	font-weight: 780;
+	cursor: pointer;
+}
+.button.secondary{
+	background: var(--panel-strong);
+	color: var(--ink);
+	border: solid 1px var(--line);
+}
+.button.accent{
+	background: var(--accent);
+}
+.button:disabled{
+	cursor: not-allowed;
+	opacity: 0.52;
+}
+.speed-control{
+	display: grid;
+	gap: 0.55rem;
+}
+.speed-row{
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 0.75rem;
+	align-items: center;
+}
+.speed-value{
+	min-width: 4.4rem;
+	color: var(--muted);
+	font-size: 0.82rem;
+	font-weight: 750;
+	text-align: right;
+}
+.route-list{
+	display: grid;
+	gap: 0.5rem;
+}
+.route-item{
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 0.65rem;
+	align-items: start;
+	padding: 0.7rem;
+	border: solid 1px var(--line);
+	border-radius: 0.5rem;
+	background: var(--panel-strong);
+}
+.route-step{
+	width: 1.65rem;
+	height: 1.65rem;
+	display: grid;
+	place-items: center;
+	border-radius: 0.4rem;
+	background: var(--accent-soft);
+	color: var(--accent);
+	font-size: 0.75rem;
+	font-weight: 850;
+}
+.route-copy{
+	min-width: 0;
+}
+.route-copy strong{
+	display: block;
+	font-size: 0.86rem;
+	line-height: 1.25;
+}
+.route-copy span{
+	display: block;
+	margin-top: 0.16rem;
+	color: var(--muted);
+	font-size: 0.76rem;
+	line-height: 1.35;
+}
+.stage-shell{
+	min-width: 0;
+	min-height: 0;
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto;
+	background: #151d1f;
+}
+.stage{
+	position: relative;
+	min-height: 0;
+	overflow: hidden;
+	background: radial-gradient(circle at 50% 25%, #41575c 0, #1a2427 36%, #0f1517 100%);
+}
+.demo-stage{
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: end center;
+	background:;
+}
+.demo-road{
+	width: min(72vw, 58rem);
+	height: 88%;
+	clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+	background:;
+	box-shadow: 0 -18px 80px rgba(0, 0, 0, 0.38);
+	opacity: 0.94;
+	transform-origin: 50% 100%;
+}
+.demo-stage.running .demo-road{
+	animation: road-drive 880ms linear infinite;
+}
+@keyframes road-drive{
+	
+}
+@keyframes road-drive from{
+	background-position: 0 0, 0 0, 0 0;
+}
+@keyframes road-drive to{
+	background-position: 0 0, 0 7.2rem, 0 0;
+}
+.stage-overlay{
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	padding: 1rem;
+}
+.hud-top{
+	display: flex;
+	justify-content: space-between;
+	align-items: start;
+	gap: 1rem;
+}
+.hud-card{
+	display: grid;
+	gap: 0.18rem;
+	max-width: min(32rem, 70vw);
+	padding: 0.78rem 0.85rem;
+	border: solid 1px rgba(255, 255, 255, 0.18);
+	border-radius: 0.5rem;
+	background: rgba(17, 23, 25, 0.72);
+	color: white;
+	backdrop-filter: blur(16px);
+}
+.hud-card strong{
+	font-size: 1rem;
+}
+.hud-card span{
+	color: rgba(255, 255, 255, 0.74);
+	font-size: 0.82rem;
+}
+.mini-map{
+	width: 9.2rem;
+	height: 9.2rem;
+	border: solid 1px rgba(255, 255, 255, 0.2);
+	border-radius: 0.5rem;
+	background:;
+	background-size: 1.15rem 1.15rem;
+	position: relative;
+	backdrop-filter: blur(16px);
+}
+.mini-route{
+	position: absolute;
+	inset: 1.3rem;
+	border-left: solid 3px rgba(255, 255, 255, 0.58);
+	border-bottom: solid 3px rgba(255, 255, 255, 0.58);
+	border-radius: 0 0 0 1.8rem;
+	transform: rotate(-16deg);
+}
+.mini-car{
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 0.72rem;
+	height: 0.72rem;
+	border-radius: 999px;
+	background: var(--accent);
+	box-shadow: 0 0 0 5px rgba(31, 143, 106, 0.2);
+}
+.stage-bottom{
+	align-self: end;
+	display: flex;
+	justify-content: center;
+}
+.transport{
+	pointer-events: auto;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.55rem;
+	border: solid 1px rgba(255, 255, 255, 0.18);
+	border-radius: 0.55rem;
+	background: rgba(17, 23, 25, 0.78);
+	backdrop-filter: blur(18px);
+}
+.transport .button{
+	min-width: 6.4rem;
+}
+.telemetry{
+	min-height: 5.5rem;
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 1px;
+	background: rgba(255, 255, 255, 0.08);
+	border-top: solid 1px rgba(255, 255, 255, 0.08);
+}
+.metric{
+	display: grid;
+	gap: 0.18rem;
+	align-content: center;
+	padding: 0.8rem 1rem;
+	background: #111719;
+	color: white;
+}
+.metric span{
+	color: rgba(255, 255, 255, 0.56);
+	font-size: 0.72rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0;
+}
+.metric strong{
+	font-size: 1rem;
+	line-height: 1.2;
+}
+.saved-list{
+	display: grid;
+	gap: 0.5rem;
+}
+.saved-item{
+	display: grid;
+	gap: 0.2rem;
+	padding: 0.68rem;
+	border: solid 1px var(--line);
+	border-radius: 0.5rem;
+	background: var(--panel-strong);
+}
+.saved-item strong{
+	font-size: 0.84rem;
+}
+.saved-item span{
+	color: var(--muted);
+	font-size: 0.74rem;
+	line-height: 1.35;
+}
+.empty{
+	color: var(--muted);
+	font-size: 0.82rem;
+	line-height: 1.45;
+}
+.provider-note{
+	color: var(--muted);
+	font-size: 0.78rem;
+	line-height: 1.45;
+}
+</style>
+<link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<div class="app-shell"><header class="topbar"><div class="brand"><div class="brand-mark"></div><div class="brand-title"><strong>Map Explorer</strong><span>Auto Drive for Street View city exploration</span></div></div><div class="status-chip"><div class="status-dot"></div><span id="providerStatus">Demo Street View ready</span></div></header><main class="workspace"><aside class="rail"><div class="rail-inner"><div class="section"><div class="section-title">City</div><div class="field"><label for="citySelect">Choose city</label><select id="citySelect" class="select"><option value="new-orleans">New Orleans</option><option value="san-francisco">San Francisco</option><option value="tokyo">Tokyo</option></select></div><div class="field"><label for="modeSelect">Exploration mode</label><select id="modeSelect" class="select"><option value="scenic">Scenic roads</option><option value="downtown">Downtown grid</option><option value="random">Random turns</option></select></div></div><div class="section"><div class="section-title">Auto Drive</div><div class="button-row"><button id="autoDriveButton" class="button accent">Auto Drive</button><button id="pauseButton" class="button secondary">Pause</button></div><div class="speed-control"><div class="speed-row"><label for="speedRange">Speed</label><div id="speedValue" class="speed-value">2.0s / step</div></div><input id="speedRange" class="input" type="range" min="700" max="4200" step="100" value="2000"></input></div></div><div class="section"><div class="section-title">Google Street View</div><div class="field"><label for="apiKeyInput">Google Maps API key</label><input id="apiKeyInput" class="input" type="password" placeholder="Paste key for live Street View"></input></div><div class="button-row"><button id="loadGoogleButton" class="button">Load Street View</button><button id="demoModeButton" class="button secondary">Demo Mode</button></div><div class="provider-note">Demo mode works immediately. Live Street View follows panorama links when a valid Google Maps key is loaded.</div></div><div class="section"><div class="section-title">Route</div><div id="routeList" class="route-list"></div></div></div></aside><div class="stage-shell"><div class="stage"><div id="streetViewStage" class="street-view-stage"></div><div id="demoStage" class="demo-stage"><div class="demo-road"></div></div><div class="stage-overlay"><div class="hud-top"><div class="hud-card"><strong id="currentRoad">Canal Street</strong><span id="driveHint">Press Auto Drive to begin exploring.</span></div><div class="mini-map"><div class="mini-route"></div><div id="miniCar" class="mini-car"></div></div></div><div></div><div class="stage-bottom"><div class="transport"><button id="backButton" class="button secondary">Back</button><button id="stageAutoButton" class="button accent">Auto Drive</button><button id="nextButton" class="button secondary">Next Turn</button><button id="saveButton" class="button secondary">Save</button></div></div></div></div><div class="telemetry"><div class="metric"><span>Street View</span><strong id="providerMetric">Demo</strong></div><div class="metric"><span>City</span><strong id="cityMetric">New Orleans</strong></div><div class="metric"><span>Heading</span><strong id="headingMetric">72 deg</strong></div><div class="metric"><span>Distance</span><strong id="distanceMetric">0.0 mi</strong></div></div></div><aside class="rail right"><div class="rail-inner"><div class="section"><div class="section-title">Current</div><div class="route-item"><div id="stepBadge" class="route-step">0</div><div class="route-copy"><strong id="currentCity">New Orleans</strong><span id="currentSummary">Canal Street toward the French Quarter</span></div></div></div><div class="section"><div class="section-title">Discovery Note</div><textarea id="noteInput" class="textarea" placeholder="What did you notice here?"></textarea><button id="saveNoteButton" class="button">Save Current View</button></div><div class="section"><div class="section-title">Saved</div><div id="savedList" class="saved-list"><div class="empty">No saved discoveries yet.</div></div></div></div></aside></main></div><script src="./app.js"></script>
+
+</body>
+</html>

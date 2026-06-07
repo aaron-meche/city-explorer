@@ -1,0 +1,13 @@
+{
+  "name": "map-explorer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Rue-powered Street View exploration app with automatic road driving.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "npm run build && node scripts/serve.mjs",
+    "start": "npm run dev",
+    "check": "npm run build"
+  }
+}
