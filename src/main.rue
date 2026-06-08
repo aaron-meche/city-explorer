@@ -1,8 +1,6 @@
 import "./Theme.rue"
+import { ExplorerShell } from "./Shell.rue"
 
 Interface {
-    new UIElement({
-        tag: "main"
-        content: "Map Explorer"
-    })
+    ExplorerShell()
 }

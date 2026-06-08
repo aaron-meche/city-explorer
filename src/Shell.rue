@@ -1,0 +1,71 @@
+.app-shell {
+    width: 100vw
+    height: 100vh
+    display: grid
+    grid-template-rows: 4.25rem minmax(0, 1fr)
+    overflow: hidden
+}
+
+.navigation-shell {
+    position: relative
+    z-index: 50
+    border-bottom: solid 1px var(--border)
+    background: rgba(255, 255, 255, 0.97)
+}
+
+.explorer-workspace {
+    position: relative
+    min-width: 0
+    min-height: 0
+    overflow: hidden
+    background: #eef3ef
+}
+
+.map-stage {
+    position: absolute
+    inset: 0
+    overflow: hidden
+    background: var(--canvas)
+}
+
+.workspace-layer {
+    position: absolute
+    z-index: 10
+}
+
+.shell-placeholder {
+    height: 100%
+    display: flex
+    align-items: center
+    padding: 0 1.4rem
+    font-size: 1.15rem
+    font-weight: 760
+}
+
+export component ExplorerShell() {
+    className: "app-shell"
+    content: [
+        new UIElement({
+            tag: "header"
+            className: "navigation-shell"
+            id: "navigationShell"
+            content: new Wrapper("Map Explorer", {
+                className: "shell-placeholder"
+            })
+        })
+        new UIElement({
+            tag: "main"
+            className: "explorer-workspace"
+            id: "explorerWorkspace"
+            content: new UIElement({
+                tag: "section"
+                className: "map-stage"
+                id: "mapStage"
+                aria: {
+                    label: "Map exploration workspace"
+                }
+                content: ""
+            })
+        })
+    ]
+}
