@@ -1,0 +1,145 @@
+.navigation {
+    height: 100%
+    display: flex
+    align-items: center
+    gap: 1.25rem
+    padding: 0 1.35rem
+}
+
+.brand-link {
+    min-width: max-content
+    display: inline-flex
+    align-items: center
+    gap: 0.78rem
+    color: var(--ink)
+    text-decoration: none
+}
+
+.brand-mark {
+    width: 2.35rem
+    height: 2.35rem
+    position: relative
+    display: block
+}
+
+.brand-mark:before {
+    content: ""
+    position: absolute
+    inset: 0.24rem 0.32rem
+    border-left: solid 2px var(--route)
+    border-right: solid 2px var(--route)
+    border-radius: 44% 18% 44% 18%
+    transform: skewX(-18deg) rotate(6deg)
+}
+
+.brand-mark:after {
+    content: ""
+    position: absolute
+    width: 0.42rem
+    height: 0.42rem
+    left: 0.08rem
+    top: 0.08rem
+    border: solid 2px var(--route)
+    border-radius: 999px
+    background: white
+    box-shadow: 1.76rem 1.65rem 0 -2px white, 1.76rem 1.65rem 0 0 var(--route)
+}
+
+.brand-name {
+    font-size: 1.18rem
+    font-weight: 790
+    letter-spacing: -0.025em
+}
+
+.navigation-actions {
+    margin-left: auto
+    height: 100%
+    display: flex
+    align-items: stretch
+    gap: 0.2rem
+}
+
+.navigation-link {
+    position: relative
+    min-width: 6.2rem
+    border: 0
+    background: transparent
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    gap: 0.5rem
+    padding: 0 0.85rem
+    color: #37423b
+    font-size: 0.9rem
+    font-weight: 620
+    cursor: pointer
+}
+
+.navigation-link:hover {
+    color: var(--route)
+    background: var(--route-soft)
+}
+
+.navigation-link.active {
+    color: var(--route)
+}
+
+.navigation-link.active:after {
+    content: ""
+    position: absolute
+    left: 0.85rem
+    right: 0.85rem
+    bottom: 0
+    height: 2px
+    background: var(--route)
+}
+
+.nav-symbol {
+    width: 1.45rem
+    height: 1.45rem
+    border: solid 1.5px currentColor
+    border-radius: 999px
+    display: inline-grid
+    place-items: center
+    font-size: 0.72rem
+    font-weight: 800
+}
+
+export component Navigation() {
+    tag: "nav"
+    className: "navigation"
+    aria: {
+        label: "Primary navigation"
+    }
+    content: [
+        new UIElement({
+            tag: "a"
+            className: "brand-link"
+            href: "#explore"
+            content: [
+                new UIElement({ className: "brand-mark", aria: { hidden: "true" }, content: "" })
+                new Wrapper("Map Explorer", { className: "brand-name" })
+            ]
+        })
+        new UIElement({
+            className: "navigation-actions"
+            content: [
+                new Button("Explore", {
+                    className: "navigation-link active"
+                    attrs: { "data-screen": "explore" }
+                    content: [new Wrapper("⌖", { className: "nav-symbol" }), "Explore"]
+                })
+                new Button("Guesser", {
+                    className: "navigation-link"
+                    attrs: { "data-screen": "guesser" }
+                    content: [new Wrapper("?", { className: "nav-symbol" }), "Guesser"]
+                })
+                new Button("Preferences", {
+                    className: "navigation-link"
+                    attrs: { "data-screen": "preferences" }
+                    content: [new Wrapper("⚙", { className: "nav-symbol" }), "Preferences"]
+                })
+            ]
+        })
+    ]
+}
