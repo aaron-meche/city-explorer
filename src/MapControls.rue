@@ -45,6 +45,111 @@
     line-height: 1
 }
 
+.map-search {
+    top: 1.25rem
+    left: 1.35rem
+    width: min(34rem, calc(100vw - 44rem))
+    height: 3.65rem
+    display: grid
+    grid-template-columns: auto minmax(0, 1fr) auto
+    align-items: center
+    gap: 0.7rem
+    padding: 0 0.65rem 0 1rem
+}
+
+.search-symbol {
+    font-size: 1.2rem
+    color: var(--ink)
+}
+
+.map-search-input {
+    min-width: 0
+    height: 100%
+    border: 0
+    outline: 0
+    background: transparent
+    color: var(--ink)
+    font-size: 0.92rem
+}
+
+.map-search-input::placeholder {
+    color: #7b857e
+}
+
+.search-filter-button {
+    width: 2.45rem
+    height: 2.45rem
+    border: 0
+    border-radius: var(--radius-small)
+    background: transparent
+    font-size: 1.1rem
+    cursor: pointer
+}
+
+.search-filter-button:hover {
+    background: var(--surface-soft)
+}
+
+.zoom-controls {
+    right: 27.3rem
+    bottom: 3.65rem
+    display: grid
+    overflow: hidden
+}
+
+.zoom-button {
+    width: 2.65rem
+    height: 2.65rem
+    border: 0
+    border-bottom: solid 1px var(--border)
+    background: white
+    font-size: 1.15rem
+    cursor: pointer
+}
+
+.zoom-button:last-child {
+    border-bottom: 0
+}
+
+.zoom-button:hover {
+    background: var(--surface-soft)
+}
+
+export component MapSearch() {
+    tag: "form"
+    className: "map-search panel workspace-layer"
+    id: "mapSearchForm"
+    attrs: {
+        role: "search"
+    }
+    content: [
+        new Wrapper("⌕", { className: "search-symbol", aria: { hidden: "true" } })
+        new UIElement({
+            tag: "input"
+            id: "mapSearchInput"
+            className: "map-search-input"
+            type: "search"
+            placeholder: "Search roads, cities, landmarks, or coordinates"
+            aria: { label: "Search the map" }
+        })
+        new Button("☷", {
+            className: "search-filter-button"
+            type: "button"
+            aria: { label: "Search filters" }
+        })
+    ]
+}
+
+export component ZoomControls() {
+    className: "zoom-controls panel workspace-layer"
+    aria: { label: "Map zoom controls" }
+    content: [
+        new Button("◎", { className: "zoom-button", attrs: { "data-map-action": "locate" }, aria: { label: "Center current location" } })
+        new Button("+", { className: "zoom-button", attrs: { "data-map-action": "zoom-in" }, aria: { label: "Zoom in" } })
+        new Button("−", { className: "zoom-button", attrs: { "data-map-action": "zoom-out" }, aria: { label: "Zoom out" } })
+    ]
+}
+
 export component MapTypeSelector() {
     className: "map-type-selector panel workspace-layer"
     id: "mapTypeSelector"

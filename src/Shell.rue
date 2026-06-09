@@ -1,5 +1,5 @@
 import { Navigation } from "./Navigation.rue"
-import { MapTypeSelector } from "./MapControls.rue"
+import { MapSearch, MapTypeSelector, ZoomControls } from "./MapControls.rue"
 
 .app-shell {
     width: 100vw
@@ -59,7 +59,9 @@ export component ExplorerShell() {
                     }
                     content: ""
                 })
+                MapSearch()
                 MapTypeSelector()
+                ZoomControls()
             ]
         })
     ]
