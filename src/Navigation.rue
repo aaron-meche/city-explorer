@@ -59,6 +59,29 @@
     gap: 0.2rem
 }
 
+.map-selector-toggle {
+    width: 2.35rem
+    height: 2.35rem
+    flex: 0 0 auto
+    border: solid 1px var(--border)
+    border-radius: 999px
+    background: white
+    display: grid
+    place-items: center
+    padding: 0 0 0.12rem
+    font-size: 1.15rem
+    cursor: pointer
+    transition: background 160ms ease, transform 160ms ease
+}
+
+.map-selector-toggle:hover {
+    background: var(--surface-soft)
+}
+
+.map-selector-toggle[aria-expanded="false"] {
+    transform: rotate(180deg)
+}
+
 .navigation-link {
     position: relative
     min-width: 6.2rem
@@ -140,6 +163,21 @@ export component Navigation() {
                     content: [new Wrapper("⚙", { className: "nav-symbol" }), "Preferences"]
                 })
             ]
+        })
+        new Button("⌄", {
+            id: "mapToggleButton"
+            className: "map-selector-toggle"
+            aria: {
+                label: "Toggle map type selector"
+                expanded: "true"
+                controls: "mapTypeSelector"
+            }
+            onclick: (element) => {
+                const selector = document.getElementById("mapTypeSelector")
+                const isExpanded = element.getAttribute("aria-expanded") === "true"
+                element.setAttribute("aria-expanded", String(!isExpanded))
+                selector.classList.toggle("hidden", isExpanded)
+            }
         })
     ]
 }

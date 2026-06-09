@@ -1,3 +1,6 @@
+import { Navigation } from "./Navigation.rue"
+import { MapTypeSelector } from "./MapControls.rue"
+
 .app-shell {
     width: 100vw
     height: 100vh
@@ -46,16 +49,18 @@ export component ExplorerShell() {
             tag: "main"
             className: "explorer-workspace"
             id: "explorerWorkspace"
-            content: new UIElement({
-                tag: "section"
-                className: "map-stage"
-                id: "mapStage"
-                aria: {
-                    label: "Map exploration workspace"
-                }
-                content: ""
-            })
+            content: [
+                new UIElement({
+                    tag: "section"
+                    className: "map-stage"
+                    id: "mapStage"
+                    aria: {
+                        label: "Map exploration workspace"
+                    }
+                    content: ""
+                })
+                MapTypeSelector()
+            ]
         })
     ]
 }
-import { Navigation } from "./Navigation.rue"

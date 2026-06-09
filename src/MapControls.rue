@@ -1,0 +1,61 @@
+.map-type-selector {
+    top: 1.25rem
+    right: 1.35rem
+    height: 4.15rem
+    padding: 0.45rem
+    display: flex
+    align-items: stretch
+    gap: 0.12rem
+    transition: opacity 160ms ease, transform 160ms ease
+}
+
+.map-type-selector.hidden {
+    opacity: 0
+    transform: translateY(-0.5rem)
+    pointer-events: none
+}
+
+.map-type-button {
+    min-width: 5.5rem
+    border: 0
+    border-radius: var(--radius-small)
+    background: transparent
+    display: grid
+    place-items: center
+    align-content: center
+    gap: 0.3rem
+    padding: 0.35rem 0.65rem
+    color: #344039
+    font-size: 0.77rem
+    cursor: pointer
+}
+
+.map-type-button:hover {
+    background: var(--surface-soft)
+}
+
+.map-type-button.active {
+    background: var(--route-soft)
+    color: var(--route-dark)
+    box-shadow: inset 0 0 0 1px rgba(0, 107, 67, 0.35)
+}
+
+.map-type-icon {
+    font-size: 1.12rem
+    line-height: 1
+}
+
+export component MapTypeSelector() {
+    className: "map-type-selector panel workspace-layer"
+    id: "mapTypeSelector"
+    aria: {
+        label: "Map type selector"
+    }
+    content: [
+        new Button("Map", { className: "map-type-button active", attrs: { "data-map-type": "map" }, content: [new Wrapper("▱", { className: "map-type-icon" }), "Map"] })
+        new Button("Satellite", { className: "map-type-button", attrs: { "data-map-type": "satellite" }, content: [new Wrapper("◇", { className: "map-type-icon" }), "Satellite"] })
+        new Button("Traffic", { className: "map-type-button", attrs: { "data-map-type": "traffic" }, content: [new Wrapper("▰", { className: "map-type-icon" }), "Traffic"] })
+        new Button("Terrain", { className: "map-type-button", attrs: { "data-map-type": "terrain" }, content: [new Wrapper("⌁", { className: "map-type-icon" }), "Terrain"] })
+        new Button("Labels", { className: "map-type-button", attrs: { "data-map-type": "labels" }, content: [new Wrapper("T", { className: "map-type-icon" }), "Labels"] })
+    ]
+}
