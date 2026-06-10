@@ -28,6 +28,7 @@ fs.mkdirSync(outputRoot, { recursive: true })
 
 const html = file.getHTML().replace("<title>Document</title>", "<title>Map Explorer</title>")
 fs.writeFileSync(path.join(outputRoot, "index.html"), html)
+copyStaticFiles(sourceRoot, outputRoot)
 
 console.log(`Built Map Explorer to ${path.relative(projectRoot, outputRoot)}/`)
 
@@ -109,4 +110,20 @@ function stripModuleSyntax(source) {
   return source
     .replace(/^\s*import\s+(?:\{\s*[^}]+\s*\}\s+from\s+)?["'][^"']+\.rue["'];?\s*$/gm, "")
     .replace(/^\s*export\s+component\s+/gm, "component ")
+}
+
+function copyStaticFiles(sourceDir, targetDir) {
+  for (const entry of fs.readdirSync(sourceDir, { withFileTypes: true })) {
+    const sourcePath = path.join(sourceDir, entry.name)
+    const targetPath = path.join(targetDir, entry.name)
+
+    if (entry.isDirectory()) {
+      fs.mkdirSync(targetPath, { recursive: true })
+      copyStaticFiles(sourcePath, targetPath)
+      continue
+    }
+
+    if (entry.name.endsWith(".rue")) continue
+    fs.copyFileSync(sourcePath, targetPath)
+  }
 }
