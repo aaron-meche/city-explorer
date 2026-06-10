@@ -1,5 +1,6 @@
 import { Navigation } from "./Navigation.rue"
 import { MapSearch, MapTypeSelector, ZoomControls } from "./MapControls.rue"
+import { DemoMap } from "./DemoMap.rue"
 
 .app-shell {
     width: 100vw
@@ -57,7 +58,7 @@ export component ExplorerShell() {
                     aria: {
                         label: "Map exploration workspace"
                     }
-                    content: ""
+                    content: DemoMap()
                 })
                 MapSearch()
                 MapTypeSelector()

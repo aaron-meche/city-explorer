@@ -1,0 +1,231 @@
+.demo-map {
+    position: absolute
+    inset: 0
+    overflow: hidden
+    background-color: #f4f7f4
+    background-image: linear-gradient(28deg, transparent 48%, rgba(86, 103, 92, 0.13) 49%, rgba(86, 103, 92, 0.13) 50%, transparent 51%), linear-gradient(118deg, transparent 48%, rgba(86, 103, 92, 0.1) 49%, rgba(86, 103, 92, 0.1) 50%, transparent 51%)
+    background-size: 3.8rem 3.8rem, 4.6rem 4.6rem
+}
+
+.demo-map:before {
+    content: ""
+    position: absolute
+    width: 55%
+    height: 78%
+    right: -13%
+    bottom: -27%
+    border-radius: 47% 0 0 0
+    background: var(--water)
+    border: solid 1.1rem rgba(255, 255, 255, 0.72)
+    box-shadow: 0 0 0 1px rgba(74, 133, 153, 0.18)
+    transform: rotate(-7deg)
+}
+
+.map-district {
+    position: absolute
+    z-index: 1
+    color: rgba(20, 32, 25, 0.68)
+    font-size: 0.86rem
+    font-weight: 720
+    letter-spacing: 0.08em
+    line-height: 1.05
+    text-align: center
+    text-transform: uppercase
+}
+
+.district-midcity {
+    left: 10%
+    top: 13%
+}
+
+.district-treme {
+    left: 43%
+    top: 9%
+}
+
+.district-quarter {
+    left: 56%
+    top: 31%
+    font-size: 1.05rem
+}
+
+.district-bywater {
+    right: 18%
+    top: 18%
+}
+
+.district-cbd {
+    left: 35%
+    top: 55%
+}
+
+.river-label {
+    position: absolute
+    z-index: 2
+    right: 34%
+    bottom: 21%
+    color: rgba(49, 112, 140, 0.8)
+    font-family: Georgia, serif
+    font-size: 1rem
+    font-style: italic
+    transform: rotate(-42deg)
+}
+
+.road-label {
+    position: absolute
+    z-index: 3
+    color: #435048
+    font-size: 0.7rem
+    background: rgba(247, 249, 247, 0.82)
+    padding: 0.08rem 0.2rem
+}
+
+.road-canal {
+    left: 28%
+    top: 34%
+    transform: rotate(-8deg)
+}
+
+.road-esplanade {
+    left: 57%
+    top: 20%
+    transform: rotate(-4deg)
+}
+
+.route-segment {
+    position: absolute
+    z-index: 4
+    height: 0.28rem
+    border-radius: 999px
+    background: repeating-linear-gradient(90deg, #929b95 0 0.42rem, transparent 0.42rem 0.72rem)
+    transform-origin: left center
+}
+
+.route-segment.complete {
+    background: var(--route)
+}
+
+.segment-one {
+    width: 30%
+    left: 20%
+    top: 39%
+    transform: rotate(-8deg)
+}
+
+.segment-two {
+    width: 18%
+    left: 49.5%
+    top: 34.7%
+    transform: rotate(-38deg)
+}
+
+.segment-three {
+    width: 22%
+    left: 63.8%
+    top: 23.4%
+    transform: rotate(66deg)
+}
+
+.segment-four {
+    width: 22%
+    left: 72.7%
+    top: 41.7%
+    transform: rotate(137deg)
+}
+
+.segment-five {
+    width: 18%
+    left: 57.5%
+    top: 55.9%
+    transform: rotate(110deg)
+}
+
+.waypoint {
+    position: absolute
+    z-index: 6
+    width: 1.65rem
+    height: 1.65rem
+    border: solid 2px #7d8880
+    border-radius: 999px
+    background: white
+    display: grid
+    place-items: center
+    color: #344039
+    font-size: 0.72rem
+    font-weight: 760
+    transform: translate(-50%, -50%)
+}
+
+.waypoint.active {
+    width: 2.35rem
+    height: 2.35rem
+    border-color: var(--route-dark)
+    background: white
+    color: var(--route)
+    box-shadow: var(--shadow-small)
+}
+
+.waypoint-one {
+    left: 20%
+    top: 39%
+}
+
+.waypoint-two {
+    left: 50%
+    top: 35%
+}
+
+.waypoint-three {
+    left: 64%
+    top: 23%
+}
+
+.waypoint-four {
+    left: 73%
+    top: 42%
+}
+
+.waypoint-five {
+    left: 58%
+    top: 56%
+}
+
+.heading-cone {
+    position: absolute
+    z-index: 5
+    left: 49.5%
+    top: 34.5%
+    width: 10rem
+    height: 6rem
+    background: linear-gradient(90deg, rgba(0, 107, 67, 0.17), transparent)
+    clip-path: polygon(0 50%, 100% 0, 100% 100%)
+    transform: rotate(-6deg)
+    transform-origin: left center
+}
+
+export component DemoMap() {
+    className: "demo-map"
+    id: "demoMap"
+    attrs: { "data-map-type": "map", "data-zoom": "14" }
+    content: [
+        new Wrapper("Mid-City", { className: "map-district district-midcity" })
+        new Wrapper("Tremé / Lafitte", { className: "map-district district-treme" })
+        new Wrapper("French Quarter", { className: "map-district district-quarter" })
+        new Wrapper("Bywater", { className: "map-district district-bywater" })
+        new Wrapper("Central Business District", { className: "map-district district-cbd" })
+        new Wrapper("Mississippi River", { className: "river-label" })
+        new Wrapper("Canal Street", { className: "road-label road-canal" })
+        new Wrapper("Esplanade Ave", { className: "road-label road-esplanade" })
+        new UIElement({ className: "route-segment segment-one complete", attrs: { "data-segment": "1" }, content: "" })
+        new UIElement({ className: "route-segment segment-two", attrs: { "data-segment": "2" }, content: "" })
+        new UIElement({ className: "route-segment segment-three", attrs: { "data-segment": "3" }, content: "" })
+        new UIElement({ className: "route-segment segment-four", attrs: { "data-segment": "4" }, content: "" })
+        new UIElement({ className: "route-segment segment-five", attrs: { "data-segment": "5" }, content: "" })
+        new Wrapper("1", { className: "waypoint waypoint-one", attrs: { "data-waypoint": "0" } })
+        new Wrapper("➤", { className: "waypoint waypoint-two active", attrs: { "data-waypoint": "1" } })
+        new Wrapper("3", { className: "waypoint waypoint-three", attrs: { "data-waypoint": "2" } })
+        new Wrapper("4", { className: "waypoint waypoint-four", attrs: { "data-waypoint": "3" } })
+        new Wrapper("5", { className: "waypoint waypoint-five", attrs: { "data-waypoint": "4" } })
+        new UIElement({ className: "heading-cone", content: "" })
+    ]
+}
