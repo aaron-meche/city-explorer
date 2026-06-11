@@ -129,7 +129,7 @@ export component RoutePanel() {
             aria: { label: "Route transport controls" }
             content: [
                 new Button("‹ Back", { className: "button", attrs: { "data-step-direction": "-1" } })
-                new Button("Auto Drive", { className: "button primary", id: "autoDriveButton", disabled: "true" })
+                new Button("Auto Drive", { className: "button primary", id: "autoDriveButton", aria: { pressed: "false" } })
                 new Button("Next Turn ›", { className: "button", attrs: { "data-step-direction": "1" } })
             ]
         })
