@@ -44,6 +44,19 @@
     display: grid
 }
 
+.route-transport {
+    display: grid
+    grid-template-columns: 1fr 1.35fr 1fr
+    gap: 0.55rem
+    padding: 0.85rem 1rem
+    border-bottom: solid 1px var(--border)
+}
+
+.route-transport .button {
+    min-width: 0
+    padding: 0 0.55rem
+}
+
 .route-step {
     position: relative
     min-height: 2.7rem
@@ -109,6 +122,15 @@ export component RoutePanel() {
             content: [
                 new UIElement({ tag: "strong", id: "routeName", content: "New Orleans — French Quarter Loop" })
                 new Button("⌃", { className: "panel-collapse", attrs: { "data-panel-toggle": "routePanel" }, aria: { label: "Collapse route panel" } })
+            ]
+        })
+        new UIElement({
+            className: "route-transport"
+            aria: { label: "Route transport controls" }
+            content: [
+                new Button("‹ Back", { className: "button", attrs: { "data-step-direction": "-1" } })
+                new Button("Auto Drive", { className: "button primary", id: "autoDriveButton", disabled: "true" })
+                new Button("Next Turn ›", { className: "button", attrs: { "data-step-direction": "1" } })
             ]
         })
         new UIElement({

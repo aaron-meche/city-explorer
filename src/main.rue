@@ -3,4 +3,10 @@ import { ExplorerShell } from "./Shell.rue"
 
 Interface {
     ExplorerShell()
+    new UIElement({
+        tag: "script"
+        type: "module"
+        src: "./app.js"
+        content: ""
+    })
 }
