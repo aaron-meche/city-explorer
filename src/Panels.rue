@@ -1,0 +1,127 @@
+.route-panel {
+    left: 1.35rem
+    bottom: 2.25rem
+    width: 29.5rem
+    max-height: calc(100% - 7.5rem)
+    overflow: hidden
+}
+
+.panel-heading {
+    min-height: 3.2rem
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 1rem
+    padding: 0.8rem 1rem
+    border-bottom: solid 1px var(--border)
+}
+
+.panel-heading strong {
+    min-width: 0
+    font-size: 0.92rem
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+}
+
+.panel-collapse {
+    width: 2rem
+    height: 2rem
+    border: 0
+    background: transparent
+    border-radius: var(--radius-small)
+    cursor: pointer
+}
+
+.panel-collapse:hover {
+    background: var(--surface-soft)
+}
+
+.route-list {
+    margin: 0
+    padding: 0.8rem 1rem 1rem
+    list-style: none
+    display: grid
+}
+
+.route-step {
+    position: relative
+    min-height: 2.7rem
+    display: grid
+    grid-template-columns: 1.8rem minmax(0, 1fr) auto
+    align-items: center
+    gap: 0.65rem
+    padding: 0.22rem 0.45rem 0.22rem 0
+    border-radius: var(--radius-small)
+    font-size: 0.78rem
+}
+
+.route-step:before {
+    content: ""
+    position: absolute
+    left: 0.86rem
+    top: -0.72rem
+    bottom: 1.95rem
+    width: 1px
+    background: var(--border-strong)
+}
+
+.route-step:first-child:before {
+    display: none
+}
+
+.route-step.active {
+    background: linear-gradient(90deg, var(--route-soft), transparent)
+    color: var(--route-dark)
+}
+
+.step-number {
+    width: 1.55rem
+    height: 1.55rem
+    border: solid 1px var(--border-strong)
+    border-radius: 999px
+    background: white
+    display: grid
+    place-items: center
+    font-weight: 740
+    z-index: 1
+}
+
+.route-step.active .step-number {
+    border-color: var(--route)
+    background: var(--route)
+    color: white
+}
+
+.step-distance {
+    color: var(--muted)
+    font-variant-numeric: tabular-nums
+}
+
+export component RoutePanel() {
+    tag: "aside"
+    className: "route-panel panel workspace-layer"
+    id: "routePanel"
+    aria: { label: "Current route" }
+    content: [
+        new UIElement({
+            className: "panel-heading"
+            content: [
+                new UIElement({ tag: "strong", id: "routeName", content: "New Orleans — French Quarter Loop" })
+                new Button("⌃", { className: "panel-collapse", attrs: { "data-panel-toggle": "routePanel" }, aria: { label: "Collapse route panel" } })
+            ]
+        })
+        new UIElement({
+            tag: "ol"
+            className: "route-list"
+            id: "routeList"
+            content: [
+                new UIElement({ tag: "li", className: "route-step", attrs: { "data-route-step": "0" }, content: [new Wrapper("1", { className: "step-number" }), new Wrapper("Start on Canal Street"), new Wrapper("0.0 mi", { className: "step-distance" })] })
+                new UIElement({ tag: "li", className: "route-step active", attrs: { "data-route-step": "1" }, content: [new Wrapper("2", { className: "step-number" }), new Wrapper("Continue on Canal Street"), new Wrapper("0.8 mi", { className: "step-distance" })] })
+                new UIElement({ tag: "li", className: "route-step", attrs: { "data-route-step": "2" }, content: [new Wrapper("3", { className: "step-number" }), new Wrapper("Turn right on Esplanade Avenue"), new Wrapper("1.6 mi", { className: "step-distance" })] })
+                new UIElement({ tag: "li", className: "route-step", attrs: { "data-route-step": "3" }, content: [new Wrapper("4", { className: "step-number" }), new Wrapper("Turn right on Decatur Street"), new Wrapper("2.3 mi", { className: "step-distance" })] })
+                new UIElement({ tag: "li", className: "route-step", attrs: { "data-route-step": "4" }, content: [new Wrapper("5", { className: "step-number" }), new Wrapper("Turn left on Basin Street"), new Wrapper("3.1 mi", { className: "step-distance" })] })
+            ]
+        })
+    ]
+}
