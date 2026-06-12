@@ -11,6 +11,20 @@ const state = {
 const route = () => routes[state.routeId]
 const activeStep = () => route().steps[state.step]
 const clampStep = value => Math.max(0, Math.min(route().steps.length - 1, value))
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+document.body.classList.toggle("reduce-motion", reducedMotion.matches)
+reducedMotion.addEventListener?.("change", event => {
+  document.body.classList.toggle("reduce-motion", event.matches)
+})
+
+document.getElementById("speedSelect")?.addEventListener("change", event => {
+  state.speedMs = Number(event.target.value)
+  if (state.running) {
+    stopAutoDrive()
+    startAutoDrive()
+  }
+})
 
 document.addEventListener("click", event => {
   if (event.target.closest("#autoDriveButton")) {
@@ -73,6 +87,7 @@ function renderRouteProgress() {
   const back = document.querySelector('[data-step-direction="-1"]')
   const next = document.querySelector('[data-step-direction="1"]')
   const autoDrive = document.getElementById("autoDriveButton")
+  document.body.classList.toggle("is-driving", state.running)
   if (back) back.disabled = state.step === 0
   if (next) next.disabled = state.step === route().steps.length - 1
   if (autoDrive) {

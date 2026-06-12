@@ -99,6 +99,7 @@
     border-radius: 999px
     background: repeating-linear-gradient(90deg, #929b95 0 0.42rem, transparent 0.42rem 0.72rem)
     transform-origin: left center
+    transition: background 280ms ease, opacity 280ms ease
 }
 
 .route-segment.complete {
@@ -154,6 +155,7 @@
     font-size: 0.72rem
     font-weight: 760
     transform: translate(-50%, -50%)
+    transition: width 220ms ease, height 220ms ease, border-color 220ms ease, background 220ms ease
 }
 
 .waypoint.active {
@@ -201,6 +203,17 @@
     clip-path: polygon(0 50%, 100% 0, 100% 100%)
     transform: rotate(-6deg)
     transform-origin: left center
+    opacity: 0.7
+    transition: opacity 300ms ease, width 300ms ease
+}
+
+body.is-driving .heading-cone {
+    width: 12rem
+    opacity: 1
+}
+
+body.reduce-motion .route-segment, body.reduce-motion .waypoint, body.reduce-motion .heading-cone {
+    transition: none
 }
 
 export component DemoMap() {

@@ -57,6 +57,26 @@
     padding: 0 0.55rem
 }
 
+.route-options {
+    display: grid
+    grid-template-columns: 1fr 1.35fr
+    gap: 0.55rem
+    padding: 0 1rem 0.85rem
+    border-bottom: solid 1px var(--border)
+}
+
+.compact-select {
+    min-width: 0
+    min-height: 2.45rem
+    border: solid 1px var(--border)
+    border-radius: var(--radius-small)
+    background: white
+    color: var(--ink)
+    padding: 0 0.65rem
+    font-size: 0.8rem
+    font-weight: 650
+}
+
 .route-step {
     position: relative
     min-height: 2.7rem
@@ -131,6 +151,24 @@ export component RoutePanel() {
                 new Button("‹ Back", { className: "button", attrs: { "data-step-direction": "-1" } })
                 new Button("Auto Drive", { className: "button primary", id: "autoDriveButton", aria: { pressed: "false" } })
                 new Button("Next Turn ›", { className: "button", attrs: { "data-step-direction": "1" } })
+            ]
+        })
+        new UIElement({
+            className: "route-options"
+            content: [
+                new UIElement({
+                    tag: "select"
+                    id: "speedSelect"
+                    className: "compact-select"
+                    aria: { label: "Auto drive speed" }
+                    content: [
+                        new UIElement({ tag: "option", value: "3200", content: "0.75×" })
+                        new UIElement({ tag: "option", value: "2000", selected: "true", content: "1.0×" })
+                        new UIElement({ tag: "option", value: "1200", content: "1.5×" })
+                        new UIElement({ tag: "option", value: "700", content: "2.0×" })
+                    ]
+                })
+                new Wrapper("Scenic Roads", { className: "compact-select", id: "modeSummary" })
             ]
         })
         new UIElement({
