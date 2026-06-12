@@ -76,6 +76,12 @@ function renderRouteProgress() {
   setText("headingMetric", `${current.heading}°`)
   setText("distanceMetric", `${current.distanceMiles.toFixed(1)} mi`)
   setText("stepMetric", `Step ${state.step + 1} of ${route().steps.length}`)
+  setText("coordinatesMetric", formatCoordinates(current.lat, current.lng))
+  setText("roadClassMetric", sentenceCase(current.roadClass))
+  setText("elevationMetric", `${current.elevationFt} ft`)
+  setText("riverMileMetric", current.riverMileAHP == null ? "—" : `Mile ${current.riverMileAHP} AHP`)
+  setText("gridBearingMetric", current.gridBearing)
+  setText("surfaceMetric", `${sentenceCase(current.surface)} · ${formatGrade(current.gradePercent)}`)
 
   document.querySelectorAll("[data-route-step]").forEach((element, index) => {
     element.classList.toggle("active", index === state.step)
@@ -108,6 +114,23 @@ function renderRouteProgress() {
 function setText(id, value) {
   const element = document.getElementById(id)
   if (element) element.textContent = value
+}
+
+function formatCoordinates(lat, lng) {
+  const latitude = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? "N" : "S"}`
+  const longitude = `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? "E" : "W"}`
+  return `${latitude}, ${longitude}`
+}
+
+function sentenceCase(value) {
+  const text = String(value ?? "")
+  return text ? text[0].toUpperCase() + text.slice(1) : "—"
+}
+
+function formatGrade(grade) {
+  const value = Number(grade)
+  if (!Number.isFinite(value)) return "—"
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)}% grade`
 }
 
 renderRouteProgress()

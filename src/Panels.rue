@@ -198,6 +198,58 @@
     letter-spacing: 0.05em
 }
 
+.map-details {
+    border-bottom: solid 1px var(--border)
+}
+
+.map-details summary {
+    padding: 0.78rem 1rem
+    font-size: 0.8rem
+    font-weight: 750
+    cursor: pointer
+    list-style-position: inside
+}
+
+.map-details-grid {
+    margin: 0
+    padding: 0 1rem 0.9rem
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 0
+}
+
+.map-detail {
+    min-width: 0
+    display: grid
+    gap: 0.18rem
+    padding: 0.5rem 0
+    border-top: solid 1px var(--border)
+}
+
+.map-detail:nth-child(odd) {
+    padding-right: 0.65rem
+}
+
+.map-detail:nth-child(even) {
+    padding-left: 0.65rem
+}
+
+.map-detail dt {
+    color: var(--muted)
+    font-size: 0.64rem
+    font-weight: 700
+    letter-spacing: 0.05em
+    text-transform: uppercase
+}
+
+.map-detail dd {
+    margin: 0
+    font-size: 0.76rem
+    font-weight: 620
+    line-height: 1.3
+    font-variant-numeric: tabular-nums
+}
+
 export component RoutePanel() {
     tag: "aside"
     className: "route-panel panel workspace-layer"
@@ -272,6 +324,26 @@ export component PlacePanel() {
                 new UIElement({ className: "place-metric", content: [new Wrapper("Heading"), new UIElement({ tag: "strong", id: "headingMetric", content: "72°" })] })
                 new UIElement({ className: "place-metric", content: [new Wrapper("Distance"), new UIElement({ tag: "strong", id: "distanceMetric", content: "0.8 mi" })] })
                 new UIElement({ className: "place-metric", content: [new Wrapper("Route"), new UIElement({ tag: "strong", id: "stepMetric", content: "Step 2 of 5" })] })
+            ]
+        })
+        new UIElement({
+            tag: "details"
+            className: "map-details"
+            open: "true"
+            content: [
+                new UIElement({ tag: "summary", content: "Map details" })
+                new UIElement({
+                    tag: "dl"
+                    className: "map-details-grid"
+                    content: [
+                        new UIElement({ className: "map-detail", content: [new UIElement({ tag: "dt", content: "Coordinates" }), new UIElement({ tag: "dd", id: "coordinatesMetric", content: "29.9550° N, 90.0715° W" })] })
+                        new UIElement({ className: "map-detail", content: [new UIElement({ tag: "dt", content: "Road class" }), new UIElement({ tag: "dd", id: "roadClassMetric", content: "Principal arterial" })] })
+                        new UIElement({ className: "map-detail", content: [new UIElement({ tag: "dt", content: "Elevation" }), new UIElement({ tag: "dd", id: "elevationMetric", content: "3 ft" })] })
+                        new UIElement({ className: "map-detail", content: [new UIElement({ tag: "dt", content: "River station" }), new UIElement({ tag: "dd", id: "riverMileMetric", content: "Mile 95 AHP" })] })
+                        new UIElement({ className: "map-detail", content: [new UIElement({ tag: "dt", content: "Grid bearing" }), new UIElement({ tag: "dd", id: "gridBearingMetric", content: "72° NE" })] })
+                        new UIElement({ className: "map-detail", content: [new UIElement({ tag: "dt", content: "Surface / grade" }), new UIElement({ tag: "dd", id: "surfaceMetric", content: "Asphalt · +0.1%" })] })
+                    ]
+                })
             ]
         })
         new UIElement({ id: "placePanelBody", content: "" })
