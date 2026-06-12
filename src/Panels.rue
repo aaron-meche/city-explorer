@@ -131,6 +131,73 @@
     font-variant-numeric: tabular-nums
 }
 
+.place-panel {
+    right: 1.35rem
+    bottom: 2.25rem
+    width: 24.5rem
+    max-height: calc(100% - 7.5rem)
+    overflow: auto
+}
+
+.place-header {
+    display: grid
+    gap: 0.45rem
+    padding: 1rem
+    border-bottom: solid 1px var(--border)
+}
+
+.place-region {
+    color: #37423b
+    font-size: 0.8rem
+}
+
+.place-road {
+    display: flex
+    align-items: center
+    gap: 0.55rem
+    font-size: 1.25rem
+    font-weight: 780
+    letter-spacing: -0.02em
+}
+
+.place-road:before {
+    content: "⌖"
+    color: var(--route)
+    font-size: 1.4rem
+}
+
+.place-metrics {
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    padding: 0.8rem 0.55rem
+    border-bottom: solid 1px var(--border)
+}
+
+.place-metric {
+    min-width: 0
+    display: grid
+    gap: 0.22rem
+    padding: 0 0.45rem
+    border-right: solid 1px var(--border)
+    text-align: center
+}
+
+.place-metric:last-child {
+    border-right: 0
+}
+
+.place-metric strong {
+    font-size: 0.84rem
+    font-variant-numeric: tabular-nums
+}
+
+.place-metric span {
+    color: var(--muted)
+    font-size: 0.66rem
+    text-transform: uppercase
+    letter-spacing: 0.05em
+}
+
 export component RoutePanel() {
     tag: "aside"
     className: "route-panel panel workspace-layer"
@@ -183,5 +250,30 @@ export component RoutePanel() {
                 new UIElement({ tag: "li", className: "route-step", attrs: { "data-route-step": "4" }, content: [new Wrapper("5", { className: "step-number" }), new Wrapper("Turn left on Basin Street"), new Wrapper("3.1 mi", { className: "step-distance" })] })
             ]
         })
+    ]
+}
+
+export component PlacePanel() {
+    tag: "aside"
+    className: "place-panel panel workspace-layer"
+    id: "placePanel"
+    aria: { label: "Current place details" }
+    content: [
+        new UIElement({
+            className: "place-header"
+            content: [
+                new Wrapper("New Orleans, Louisiana", { className: "place-region", id: "currentRegion" })
+                new UIElement({ tag: "strong", className: "place-road", id: "currentRoad", content: "Canal Street" })
+            ]
+        })
+        new UIElement({
+            className: "place-metrics"
+            content: [
+                new UIElement({ className: "place-metric", content: [new Wrapper("Heading"), new UIElement({ tag: "strong", id: "headingMetric", content: "72°" })] })
+                new UIElement({ className: "place-metric", content: [new Wrapper("Distance"), new UIElement({ tag: "strong", id: "distanceMetric", content: "0.8 mi" })] })
+                new UIElement({ className: "place-metric", content: [new Wrapper("Route"), new UIElement({ tag: "strong", id: "stepMetric", content: "Step 2 of 5" })] })
+            ]
+        })
+        new UIElement({ id: "placePanelBody", content: "" })
     ]
 }

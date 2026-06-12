@@ -1,7 +1,7 @@
 import { Navigation } from "./Navigation.rue"
 import { MapSearch, MapTypeSelector, ZoomControls } from "./MapControls.rue"
 import { DemoMap } from "./DemoMap.rue"
-import { RoutePanel } from "./Panels.rue"
+import { PlacePanel, RoutePanel } from "./Panels.rue"
 
 .app-shell {
     width: 100vw
@@ -65,6 +65,7 @@ export component ExplorerShell() {
                 MapTypeSelector()
                 ZoomControls()
                 RoutePanel()
+                PlacePanel()
             ]
         })
     ]

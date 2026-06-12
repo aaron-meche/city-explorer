@@ -71,6 +71,12 @@ function stopAutoDrive() {
 function renderRouteProgress() {
   const current = activeStep()
 
+  setText("currentRegion", `${route().city}, ${route().region}`)
+  setText("currentRoad", current.road)
+  setText("headingMetric", `${current.heading}°`)
+  setText("distanceMetric", `${current.distanceMiles.toFixed(1)} mi`)
+  setText("stepMetric", `Step ${state.step + 1} of ${route().steps.length}`)
+
   document.querySelectorAll("[data-route-step]").forEach((element, index) => {
     element.classList.toggle("active", index === state.step)
   })
@@ -97,6 +103,11 @@ function renderRouteProgress() {
 
   document.documentElement.style.setProperty("--route-progress", `${state.step / (route().steps.length - 1)}`)
   document.title = `${current.road} · Map Explorer`
+}
+
+function setText(id, value) {
+  const element = document.getElementById(id)
+  if (element) element.textContent = value
 }
 
 renderRouteProgress()
