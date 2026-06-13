@@ -5,7 +5,8 @@ const state = {
   step: 1,
   running: false,
   speedMs: 2000,
-  timer: null
+  timer: null,
+  recentSearches: []
 }
 
 const route = () => routes[state.routeId]
@@ -18,6 +19,22 @@ reducedMotion.addEventListener?.("change", event => {
   document.body.classList.toggle("reduce-motion", event.matches)
 })
 
+const searchForm = document.getElementById("mapSearchForm")
+const searchInput = document.getElementById("mapSearchInput")
+const searchResults = document.getElementById("searchResults")
+
+searchForm?.addEventListener("submit", event => {
+  event.preventDefault()
+  const first = searchMatches(searchInput.value)[0]
+  if (first) selectSearchResult(first)
+})
+
+searchInput?.addEventListener("input", () => renderSearchResults(searchInput.value))
+searchInput?.addEventListener("focus", () => renderSearchResults(searchInput.value))
+searchInput?.addEventListener("keydown", event => {
+  if (event.key === "Escape") searchResults?.classList.add("hidden")
+})
+
 document.getElementById("speedSelect")?.addEventListener("change", event => {
   state.speedMs = Number(event.target.value)
   if (state.running) {
@@ -27,6 +44,15 @@ document.getElementById("speedSelect")?.addEventListener("change", event => {
 })
 
 document.addEventListener("click", event => {
+  const searchResult = event.target.closest("[data-search-step]")
+  if (searchResult) {
+    selectSearchResult({
+      routeId: searchResult.dataset.searchRoute,
+      step: Number(searchResult.dataset.searchStep)
+    })
+    return
+  }
+
   if (event.target.closest("#autoDriveButton")) {
     toggleAutoDrive()
     return
@@ -38,6 +64,55 @@ document.addEventListener("click", event => {
   const direction = Number(stepButton.dataset.stepDirection)
   setStep(state.step + direction)
 })
+
+function searchMatches(query) {
+  const normalized = query.trim().toLowerCase()
+  const matches = []
+
+  for (const candidate of Object.values(routes)) {
+    candidate.steps.forEach((step, index) => {
+      const haystack = [candidate.city, candidate.region, candidate.name, step.road, step.neighborhood, `${step.lat},${step.lng}`]
+        .join(" ")
+        .toLowerCase()
+      if (!normalized || haystack.includes(normalized)) {
+        matches.push({ routeId: candidate.id, step: index, road: step.road, place: `${candidate.city} · ${step.neighborhood}` })
+      }
+    })
+  }
+
+  return matches.slice(0, 7)
+}
+
+function renderSearchResults(query) {
+  if (!searchResults) return
+  const matches = query.trim()
+    ? searchMatches(query)
+    : state.recentSearches.length
+      ? state.recentSearches
+      : searchMatches("")
+  searchResults.classList.remove("hidden")
+  searchResults.innerHTML = matches.map(match => `
+    <button class="search-result" type="button" data-search-route="${escapeHtml(match.routeId)}" data-search-step="${match.step}">
+      <strong>${escapeHtml(match.road)}</strong>
+      <small>${escapeHtml(match.place)}</small>
+    </button>
+  `).join("")
+}
+
+function selectSearchResult(result) {
+  state.routeId = result.routeId
+  state.step = clampStep(result.step)
+  const selected = {
+    routeId: result.routeId,
+    step: result.step,
+    road: activeStep().road,
+    place: `${route().city} · ${activeStep().neighborhood}`
+  }
+  state.recentSearches = [selected, ...state.recentSearches.filter(item => item.routeId !== result.routeId || item.step !== result.step)].slice(0, 5)
+  if (searchInput) searchInput.value = activeStep().road
+  searchResults?.classList.add("hidden")
+  renderRouteProgress()
+}
 
 function setStep(nextStep) {
   state.step = clampStep(nextStep)
@@ -131,6 +206,15 @@ function formatGrade(grade) {
   const value = Number(grade)
   if (!Number.isFinite(value)) return "—"
   return `${value > 0 ? "+" : ""}${value.toFixed(1)}% grade`
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;")
 }
 
 renderRouteProgress()
