@@ -1,15 +1,19 @@
 import { defaultRouteId, routes } from "./data/routes.js"
+import { readJson, writeJson } from "./lib/storage.js"
+
+const sessionKey = "mapExplorer.session.v1"
+const savedSession = readJson(sessionKey, {})
 
 const state = {
-  routeId: defaultRouteId,
-  step: 1,
+  routeId: routes[savedSession.routeId] ? savedSession.routeId : defaultRouteId,
+  step: Number.isInteger(savedSession.step) ? savedSession.step : 1,
   running: false,
-  speedMs: 2000,
+  speedMs: Number(savedSession.speedMs) || 2000,
   timer: null,
-  recentSearches: [],
-  mapType: "map",
-  labels: true,
-  zoom: 14
+  recentSearches: Array.isArray(savedSession.recentSearches) ? savedSession.recentSearches : [],
+  mapType: savedSession.mapType || "map",
+  labels: savedSession.labels !== false,
+  zoom: Number(savedSession.zoom) || 14
 }
 
 const route = () => routes[state.routeId]
@@ -40,6 +44,7 @@ searchInput?.addEventListener("keydown", event => {
 
 document.getElementById("speedSelect")?.addEventListener("change", event => {
   state.speedMs = Number(event.target.value)
+  persistSession()
   if (state.running) {
     stopAutoDrive()
     startAutoDrive()
@@ -88,6 +93,7 @@ function applyMapType(type) {
     state.labels = !state.labels
     map.classList.toggle("labels-hidden", !state.labels)
     document.querySelector('[data-map-type="labels"]')?.classList.toggle("active", state.labels)
+    persistSession()
     return
   }
 
@@ -96,6 +102,7 @@ function applyMapType(type) {
   document.querySelectorAll("button[data-map-type]").forEach(button => {
     if (button.dataset.mapType !== "labels") button.classList.toggle("active", button.dataset.mapType === type)
   })
+  persistSession()
 }
 
 function applyMapAction(action) {
@@ -109,6 +116,7 @@ function applyMapAction(action) {
 
   state.zoom = Math.max(13, Math.min(15, state.zoom + (action === "zoom-in" ? 1 : -1)))
   map.dataset.zoom = String(state.zoom)
+  persistSession()
 }
 
 function searchMatches(query) {
@@ -157,11 +165,13 @@ function selectSearchResult(result) {
   state.recentSearches = [selected, ...state.recentSearches.filter(item => item.routeId !== result.routeId || item.step !== result.step)].slice(0, 5)
   if (searchInput) searchInput.value = activeStep().road
   searchResults?.classList.add("hidden")
+  persistSession()
   renderRouteProgress()
 }
 
 function setStep(nextStep) {
   state.step = clampStep(nextStep)
+  persistSession()
   renderRouteProgress()
 }
 
@@ -263,4 +273,34 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;")
 }
 
+function persistSession() {
+  writeJson(sessionKey, {
+    routeId: state.routeId,
+    step: state.step,
+    speedMs: state.speedMs,
+    recentSearches: state.recentSearches,
+    mapType: state.mapType,
+    labels: state.labels,
+    zoom: state.zoom
+  })
+}
+
+function hydrateSessionControls() {
+  const map = document.getElementById("demoMap")
+  if (map) {
+    map.dataset.mapType = state.mapType
+    map.dataset.zoom = String(state.zoom)
+    map.classList.toggle("labels-hidden", !state.labels)
+  }
+
+  document.querySelectorAll("button[data-map-type]").forEach(button => {
+    if (button.dataset.mapType === "labels") button.classList.toggle("active", state.labels)
+    else button.classList.toggle("active", button.dataset.mapType === state.mapType)
+  })
+
+  const speed = document.getElementById("speedSelect")
+  if (speed) speed.value = String(state.speedMs)
+}
+
+hydrateSessionControls()
 renderRouteProgress()
