@@ -6,7 +6,10 @@ const state = {
   running: false,
   speedMs: 2000,
   timer: null,
-  recentSearches: []
+  recentSearches: [],
+  mapType: "map",
+  labels: true,
+  zoom: 14
 }
 
 const route = () => routes[state.routeId]
@@ -44,6 +47,18 @@ document.getElementById("speedSelect")?.addEventListener("change", event => {
 })
 
 document.addEventListener("click", event => {
+  const mapTypeButton = event.target.closest("[data-map-type]")
+  if (mapTypeButton?.matches("button")) {
+    applyMapType(mapTypeButton.dataset.mapType)
+    return
+  }
+
+  const mapAction = event.target.closest("[data-map-action]")
+  if (mapAction) {
+    applyMapAction(mapAction.dataset.mapAction)
+    return
+  }
+
   const searchResult = event.target.closest("[data-search-step]")
   if (searchResult) {
     selectSearchResult({
@@ -64,6 +79,37 @@ document.addEventListener("click", event => {
   const direction = Number(stepButton.dataset.stepDirection)
   setStep(state.step + direction)
 })
+
+function applyMapType(type) {
+  const map = document.getElementById("demoMap")
+  if (!map) return
+
+  if (type === "labels") {
+    state.labels = !state.labels
+    map.classList.toggle("labels-hidden", !state.labels)
+    document.querySelector('[data-map-type="labels"]')?.classList.toggle("active", state.labels)
+    return
+  }
+
+  state.mapType = type
+  map.dataset.mapType = type
+  document.querySelectorAll("button[data-map-type]").forEach(button => {
+    if (button.dataset.mapType !== "labels") button.classList.toggle("active", button.dataset.mapType === type)
+  })
+}
+
+function applyMapAction(action) {
+  const map = document.getElementById("demoMap")
+  if (!map) return
+
+  if (action === "locate") {
+    setStep(state.step)
+    return
+  }
+
+  state.zoom = Math.max(13, Math.min(15, state.zoom + (action === "zoom-in" ? 1 : -1)))
+  map.dataset.zoom = String(state.zoom)
+}
 
 function searchMatches(query) {
   const normalized = query.trim().toLowerCase()

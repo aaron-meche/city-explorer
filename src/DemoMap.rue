@@ -21,6 +21,32 @@
     transform: rotate(-7deg)
 }
 
+.demo-map[data-map-type="satellite"] {
+    background-color: #556958
+    background-image: linear-gradient(28deg, transparent 48%, rgba(230, 238, 228, 0.2) 49%, rgba(230, 238, 228, 0.2) 50%, transparent 51%), linear-gradient(118deg, transparent 48%, rgba(33, 52, 40, 0.24) 49%, rgba(33, 52, 40, 0.24) 50%, transparent 51%)
+}
+
+.demo-map[data-map-type="terrain"] {
+    background-color: #edf0df
+    background-image: radial-gradient(ellipse at 30% 35%, transparent 0 28%, rgba(123, 141, 102, 0.17) 29% 30%, transparent 31% 38%, rgba(123, 141, 102, 0.12) 39% 40%, transparent 41%), linear-gradient(118deg, transparent 48%, rgba(86, 103, 92, 0.13) 49%, rgba(86, 103, 92, 0.13) 50%, transparent 51%)
+}
+
+.demo-map[data-map-type="traffic"] .route-segment:not(.complete) {
+    background: repeating-linear-gradient(90deg, #c47a21 0 0.8rem, #b33f38 0.8rem 1.2rem, transparent 1.2rem 1.45rem)
+}
+
+.demo-map.labels-hidden .map-district, .demo-map.labels-hidden .road-label, .demo-map.labels-hidden .river-label {
+    display: none
+}
+
+.demo-map[data-zoom="13"] {
+    transform: scale(0.91)
+}
+
+.demo-map[data-zoom="15"] {
+    transform: scale(1.1)
+}
+
 .map-district {
     position: absolute
     z-index: 1
