@@ -250,6 +250,62 @@
     font-variant-numeric: tabular-nums
 }
 
+.discovery-form {
+    display: grid
+    gap: 0.55rem
+    padding: 0.85rem 1rem
+    border-bottom: solid 1px var(--border)
+}
+
+.discovery-form label,
+.saved-heading {
+    font-size: 0.78rem
+    font-weight: 730
+}
+
+.discovery-note {
+    min-height: 3.8rem
+    resize: vertical
+    padding: 0.65rem 0.7rem
+    line-height: 1.35
+}
+
+.saved-discoveries {
+    display: grid
+    gap: 0.55rem
+    padding: 0.85rem 1rem 1rem
+}
+
+.saved-list {
+    display: grid
+    gap: 0.45rem
+}
+
+.saved-item {
+    display: grid
+    gap: 0.18rem
+    padding: 0.62rem 0.7rem
+    border: solid 1px var(--border)
+    border-radius: var(--radius-small)
+    background: var(--surface)
+}
+
+.saved-item strong {
+    font-size: 0.76rem
+}
+
+.saved-item span {
+    color: var(--muted)
+    font-size: 0.68rem
+    line-height: 1.35
+}
+
+.saved-empty {
+    color: var(--muted)
+    font-size: 0.72rem
+    padding: 0.45rem 0
+}
+
 export component RoutePanel() {
     tag: "aside"
     className: "route-panel panel workspace-layer"
@@ -346,6 +402,27 @@ export component PlacePanel() {
                 })
             ]
         })
-        new UIElement({ id: "placePanelBody", content: "" })
+        new UIElement({
+            id: "placePanelBody"
+            content: [
+                new UIElement({
+                    tag: "form"
+                    className: "discovery-form"
+                    id: "discoveryForm"
+                    content: [
+                        new UIElement({ tag: "label", for: "discoveryNote", content: "What did you notice here?" })
+                        new UIElement({ tag: "textarea", id: "discoveryNote", className: "field discovery-note", placeholder: "Type your observation…", content: "" })
+                        new Button("Save View", { className: "button primary", type: "submit" })
+                    ]
+                })
+                new UIElement({
+                    className: "saved-discoveries"
+                    content: [
+                        new Wrapper("Saved discoveries", { className: "saved-heading" })
+                        new UIElement({ id: "savedDiscoveries", className: "saved-list", aria: { live: "polite" }, content: new Wrapper("No saved discoveries yet.", { className: "saved-empty" }) })
+                    ]
+                })
+            ]
+        })
     ]
 }

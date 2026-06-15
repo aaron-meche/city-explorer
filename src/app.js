@@ -13,7 +13,8 @@ const state = {
   recentSearches: Array.isArray(savedSession.recentSearches) ? savedSession.recentSearches : [],
   mapType: savedSession.mapType || "map",
   labels: savedSession.labels !== false,
-  zoom: Number(savedSession.zoom) || 14
+  zoom: Number(savedSession.zoom) || 14,
+  discoveries: []
 }
 
 const route = () => routes[state.routeId]
@@ -29,6 +30,29 @@ reducedMotion.addEventListener?.("change", event => {
 const searchForm = document.getElementById("mapSearchForm")
 const searchInput = document.getElementById("mapSearchInput")
 const searchResults = document.getElementById("searchResults")
+const discoveryForm = document.getElementById("discoveryForm")
+
+discoveryForm?.addEventListener("submit", event => {
+  event.preventDefault()
+  const noteField = document.getElementById("discoveryNote")
+  const current = activeStep()
+  const note = noteField.value.trim()
+
+  state.discoveries.unshift({
+    id: crypto.randomUUID?.() ?? `${Date.now()}`,
+    routeId: state.routeId,
+    step: state.step,
+    road: current.road,
+    city: route().city,
+    coordinates: { lat: current.lat, lng: current.lng },
+    provider: "demo",
+    note: note || current.instruction,
+    savedAt: new Date().toISOString()
+  })
+  state.discoveries = state.discoveries.slice(0, 20)
+  noteField.value = ""
+  renderDiscoveries()
+})
 
 searchForm?.addEventListener("submit", event => {
   event.preventDefault()
@@ -242,6 +266,23 @@ function renderRouteProgress() {
   document.title = `${current.road} · Map Explorer`
 }
 
+function renderDiscoveries() {
+  const container = document.getElementById("savedDiscoveries")
+  if (!container) return
+
+  if (!state.discoveries.length) {
+    container.innerHTML = '<div class="saved-empty">No saved discoveries yet.</div>'
+    return
+  }
+
+  container.innerHTML = state.discoveries.slice(0, 3).map(item => `
+    <article class="saved-item" data-discovery-id="${escapeHtml(item.id)}">
+      <strong>${escapeHtml(item.road)} — ${escapeHtml(item.note)}</strong>
+      <span>${escapeHtml(item.city)} · ${formatCoordinates(item.coordinates.lat, item.coordinates.lng)}</span>
+    </article>
+  `).join("")
+}
+
 function setText(id, value) {
   const element = document.getElementById(id)
   if (element) element.textContent = value
@@ -303,4 +344,5 @@ function hydrateSessionControls() {
 }
 
 hydrateSessionControls()
+renderDiscoveries()
 renderRouteProgress()
