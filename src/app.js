@@ -3,7 +3,10 @@ import { readJson, writeJson } from "./lib/storage.js"
 
 const sessionKey = "mapExplorer.session.v1"
 const discoveriesKey = "mapExplorer.discoveries.v1"
+const preferencesKey = "mapExplorer.preferences.v1"
+const googleKey = "mapExplorer.googleMapsKey"
 const savedSession = readJson(sessionKey, {})
+const savedPreferences = readJson(preferencesKey, {})
 
 const state = {
   routeId: routes[savedSession.routeId] ? savedSession.routeId : defaultRouteId,
@@ -12,10 +15,12 @@ const state = {
   speedMs: Number(savedSession.speedMs) || 2000,
   timer: null,
   recentSearches: Array.isArray(savedSession.recentSearches) ? savedSession.recentSearches : [],
-  mapType: savedSession.mapType || "map",
-  labels: savedSession.labels !== false,
+  mapType: savedSession.mapType || savedPreferences.mapType || "map",
+  labels: savedSession.labels ?? savedPreferences.labels ?? true,
   zoom: Number(savedSession.zoom) || 14,
-  discoveries: readJson(discoveriesKey, [])
+  discoveries: readJson(discoveriesKey, []),
+  mode: savedPreferences.mode || "scenic",
+  units: savedPreferences.units || "imperial"
 }
 
 const route = () => routes[state.routeId]
@@ -32,6 +37,30 @@ const searchForm = document.getElementById("mapSearchForm")
 const searchInput = document.getElementById("mapSearchInput")
 const searchResults = document.getElementById("searchResults")
 const discoveryForm = document.getElementById("discoveryForm")
+const preferencesForm = document.getElementById("preferencesForm")
+
+preferencesForm?.addEventListener("submit", event => {
+  event.preventDefault()
+  const preferences = {
+    mapType: document.getElementById("preferenceMapType").value,
+    labels: document.getElementById("preferenceLabels").checked,
+    mode: document.getElementById("preferenceMode").value,
+    units: document.getElementById("preferenceUnits").value
+  }
+
+  writeJson(preferencesKey, preferences)
+  const key = document.getElementById("googleMapsKey").value.trim()
+  if (key) window.localStorage.setItem(googleKey, key)
+
+  state.mapType = preferences.mapType
+  state.labels = preferences.labels
+  state.mode = preferences.mode
+  state.units = preferences.units
+  hydrateSessionControls()
+  persistSession()
+  renderRouteProgress()
+  setActiveScreen("explore")
+})
 
 discoveryForm?.addEventListener("submit", event => {
   event.preventDefault()
@@ -261,11 +290,11 @@ function renderRouteProgress() {
   setText("currentRegion", `${route().city}, ${route().region}`)
   setText("currentRoad", current.road)
   setText("headingMetric", `${current.heading}°`)
-  setText("distanceMetric", `${current.distanceMiles.toFixed(1)} mi`)
+  setText("distanceMetric", formatDistance(current.distanceMiles))
   setText("stepMetric", `Step ${state.step + 1} of ${route().steps.length}`)
   setText("coordinatesMetric", formatCoordinates(current.lat, current.lng))
   setText("roadClassMetric", sentenceCase(current.roadClass))
-  setText("elevationMetric", `${current.elevationFt} ft`)
+  setText("elevationMetric", formatElevation(current.elevationFt))
   setText("riverMileMetric", current.riverMileAHP == null ? "—" : `Mile ${current.riverMileAHP} AHP`)
   setText("gridBearingMetric", current.gridBearing)
   setText("surfaceMetric", `${sentenceCase(current.surface)} · ${formatGrade(current.gradePercent)}`)
@@ -338,6 +367,18 @@ function formatGrade(grade) {
   return `${value > 0 ? "+" : ""}${value.toFixed(1)}% grade`
 }
 
+function formatDistance(miles) {
+  return state.units === "metric"
+    ? `${(miles * 1.60934).toFixed(1)} km`
+    : `${miles.toFixed(1)} mi`
+}
+
+function formatElevation(feet) {
+  return state.units === "metric"
+    ? `${Math.round(feet * 0.3048)} m`
+    : `${feet} ft`
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -374,6 +415,18 @@ function hydrateSessionControls() {
 
   const speed = document.getElementById("speedSelect")
   if (speed) speed.value = String(state.speedMs)
+
+  const mapType = document.getElementById("preferenceMapType")
+  const labels = document.getElementById("preferenceLabels")
+  const mode = document.getElementById("preferenceMode")
+  const units = document.getElementById("preferenceUnits")
+  const key = document.getElementById("googleMapsKey")
+  if (mapType) mapType.value = state.mapType
+  if (labels) labels.checked = state.labels
+  if (mode) mode.value = state.mode
+  if (units) units.value = state.units
+  if (key) key.value = window.localStorage.getItem(googleKey) || ""
+  setText("modeSummary", sentenceCase(state.mode))
 }
 
 hydrateSessionControls()
