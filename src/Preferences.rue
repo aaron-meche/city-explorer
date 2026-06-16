@@ -1,0 +1,146 @@
+.preferences-backdrop {
+    position: absolute
+    inset: 0
+    z-index: 35
+    background: rgba(20, 32, 25, 0.24)
+    opacity: 1
+    transition: opacity 180ms ease
+}
+
+.preferences-backdrop.hidden {
+    opacity: 0
+    pointer-events: none
+}
+
+.preferences-panel {
+    position: absolute
+    top: 0
+    right: 0
+    width: min(29rem, 100%)
+    height: 100%
+    overflow: auto
+    border-left: solid 1px var(--border)
+    background: var(--surface)
+    box-shadow: -16px 0 40px rgba(20, 32, 25, 0.14)
+    transform: translateX(0)
+    transition: transform 180ms ease
+}
+
+.preferences-backdrop.hidden .preferences-panel {
+    transform: translateX(100%)
+}
+
+.preferences-heading {
+    min-height: 4.4rem
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 1rem
+    padding: 0 1.2rem
+    border-bottom: solid 1px var(--border)
+}
+
+.preferences-heading h2 {
+    margin: 0
+    font-size: 1.12rem
+}
+
+.close-button {
+    width: 2.35rem
+    height: 2.35rem
+    border: solid 1px var(--border)
+    border-radius: 999px
+    background: white
+    cursor: pointer
+}
+
+.preferences-form {
+    display: grid
+    gap: 1.2rem
+    padding: 1.2rem
+}
+
+.preference-group {
+    display: grid
+    gap: 0.75rem
+    padding-bottom: 1.2rem
+    border-bottom: solid 1px var(--border)
+}
+
+.preference-group h3 {
+    margin: 0
+    font-size: 0.75rem
+    letter-spacing: 0.07em
+    text-transform: uppercase
+}
+
+.preference-field {
+    display: grid
+    gap: 0.35rem
+}
+
+.preference-field label {
+    color: var(--muted)
+    font-size: 0.74rem
+    font-weight: 680
+}
+
+.preference-check {
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 1rem
+    font-size: 0.8rem
+}
+
+export component PreferencesPanel() {
+    className: "preferences-backdrop hidden"
+    id: "preferencesBackdrop"
+    aria: { hidden: "true" }
+    content: new UIElement({
+        tag: "section"
+        className: "preferences-panel"
+        aria: { label: "Map Explorer preferences" }
+        content: [
+            new UIElement({
+                className: "preferences-heading"
+                content: [
+                    new UIElement({ tag: "h2", content: "Preferences" })
+                    new Button("×", { className: "close-button", attrs: { "data-close-preferences": "true" }, aria: { label: "Close preferences" } })
+                ]
+            })
+            new UIElement({
+                tag: "form"
+                className: "preferences-form"
+                id: "preferencesForm"
+                content: [
+                    new UIElement({
+                        className: "preference-group"
+                        content: [
+                            new UIElement({ tag: "h3", content: "Map defaults" })
+                            new UIElement({ className: "preference-field", content: [new UIElement({ tag: "label", for: "preferenceMapType", content: "Default map type" }), new UIElement({ tag: "select", id: "preferenceMapType", className: "field", content: [new UIElement({ tag: "option", value: "map", content: "Map" }), new UIElement({ tag: "option", value: "satellite", content: "Satellite" }), new UIElement({ tag: "option", value: "terrain", content: "Terrain" })] })] })
+                            new UIElement({ className: "preference-check", content: [new UIElement({ tag: "label", for: "preferenceLabels", content: "Show map labels" }), new UIElement({ tag: "input", type: "checkbox", id: "preferenceLabels", checked: "true" })] })
+                        ]
+                    })
+                    new UIElement({
+                        className: "preference-group"
+                        content: [
+                            new UIElement({ tag: "h3", content: "Exploration" })
+                            new UIElement({ className: "preference-field", content: [new UIElement({ tag: "label", for: "preferenceMode", content: "Default strategy" }), new UIElement({ tag: "select", id: "preferenceMode", className: "field", content: [new UIElement({ tag: "option", value: "scenic", content: "Scenic Roads" }), new UIElement({ tag: "option", value: "downtown", content: "Downtown Grid" }), new UIElement({ tag: "option", value: "random", content: "Random Turns" })] })] })
+                            new UIElement({ className: "preference-field", content: [new UIElement({ tag: "label", for: "preferenceUnits", content: "Distance units" }), new UIElement({ tag: "select", id: "preferenceUnits", className: "field", content: [new UIElement({ tag: "option", value: "imperial", content: "Miles and feet" }), new UIElement({ tag: "option", value: "metric", content: "Kilometers and meters" })] })] })
+                        ]
+                    })
+                    new UIElement({
+                        className: "preference-group"
+                        content: [
+                            new UIElement({ tag: "h3", content: "Provider" })
+                            new UIElement({ className: "preference-field", content: [new UIElement({ tag: "label", for: "googleMapsKey", content: "Google Maps API key" }), new UIElement({ tag: "input", type: "password", id: "googleMapsKey", className: "field", autocomplete: "off", placeholder: "Stored only in this browser" })] })
+                            new Wrapper("Demo mode remains available without a key.", { className: "muted" })
+                        ]
+                    })
+                    new Button("Save Preferences", { className: "button primary", type: "submit" })
+                ]
+            })
+        ]
+    })
+}

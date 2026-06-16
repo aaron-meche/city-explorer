@@ -78,6 +78,17 @@ document.getElementById("speedSelect")?.addEventListener("change", event => {
 })
 
 document.addEventListener("click", event => {
+  const navigation = event.target.closest("[data-screen]")
+  if (navigation) {
+    setActiveScreen(navigation.dataset.screen)
+    return
+  }
+
+  if (event.target.closest("[data-close-preferences]")) {
+    setActiveScreen("explore")
+    return
+  }
+
   const removeDiscovery = event.target.closest("[data-remove-discovery]")
   if (removeDiscovery) {
     state.discoveries = state.discoveries.filter(item => item.id !== removeDiscovery.dataset.removeDiscovery)
@@ -118,6 +129,17 @@ document.addEventListener("click", event => {
   const direction = Number(stepButton.dataset.stepDirection)
   setStep(state.step + direction)
 })
+
+function setActiveScreen(screen) {
+  document.querySelectorAll("[data-screen]").forEach(button => {
+    button.classList.toggle("active", button.dataset.screen === screen)
+  })
+
+  const preferences = document.getElementById("preferencesBackdrop")
+  const showPreferences = screen === "preferences"
+  preferences?.classList.toggle("hidden", !showPreferences)
+  preferences?.setAttribute("aria-hidden", String(!showPreferences))
+}
 
 function applyMapType(type) {
   const map = document.getElementById("demoMap")
