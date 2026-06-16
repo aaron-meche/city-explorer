@@ -282,12 +282,31 @@
 }
 
 .saved-item {
+    position: relative
     display: grid
     gap: 0.18rem
     padding: 0.62rem 0.7rem
     border: solid 1px var(--border)
     border-radius: var(--radius-small)
     background: var(--surface)
+}
+
+.saved-remove {
+    position: absolute
+    top: 0.34rem
+    right: 0.34rem
+    width: 1.7rem
+    height: 1.7rem
+    border: 0
+    border-radius: var(--radius-small)
+    background: transparent
+    color: var(--muted)
+    cursor: pointer
+}
+
+.saved-remove:hover {
+    background: #fae8e8
+    color: var(--danger)
 }
 
 .saved-item strong {

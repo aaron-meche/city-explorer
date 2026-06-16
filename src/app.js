@@ -2,6 +2,7 @@ import { defaultRouteId, routes } from "./data/routes.js"
 import { readJson, writeJson } from "./lib/storage.js"
 
 const sessionKey = "mapExplorer.session.v1"
+const discoveriesKey = "mapExplorer.discoveries.v1"
 const savedSession = readJson(sessionKey, {})
 
 const state = {
@@ -14,7 +15,7 @@ const state = {
   mapType: savedSession.mapType || "map",
   labels: savedSession.labels !== false,
   zoom: Number(savedSession.zoom) || 14,
-  discoveries: []
+  discoveries: readJson(discoveriesKey, [])
 }
 
 const route = () => routes[state.routeId]
@@ -50,6 +51,7 @@ discoveryForm?.addEventListener("submit", event => {
     savedAt: new Date().toISOString()
   })
   state.discoveries = state.discoveries.slice(0, 20)
+  writeJson(discoveriesKey, state.discoveries)
   noteField.value = ""
   renderDiscoveries()
 })
@@ -76,6 +78,14 @@ document.getElementById("speedSelect")?.addEventListener("change", event => {
 })
 
 document.addEventListener("click", event => {
+  const removeDiscovery = event.target.closest("[data-remove-discovery]")
+  if (removeDiscovery) {
+    state.discoveries = state.discoveries.filter(item => item.id !== removeDiscovery.dataset.removeDiscovery)
+    writeJson(discoveriesKey, state.discoveries)
+    renderDiscoveries()
+    return
+  }
+
   const mapTypeButton = event.target.closest("[data-map-type]")
   if (mapTypeButton?.matches("button")) {
     applyMapType(mapTypeButton.dataset.mapType)
@@ -279,6 +289,7 @@ function renderDiscoveries() {
     <article class="saved-item" data-discovery-id="${escapeHtml(item.id)}">
       <strong>${escapeHtml(item.road)} — ${escapeHtml(item.note)}</strong>
       <span>${escapeHtml(item.city)} · ${formatCoordinates(item.coordinates.lat, item.coordinates.lng)}</span>
+      <button class="saved-remove" type="button" data-remove-discovery="${escapeHtml(item.id)}" aria-label="Remove ${escapeHtml(item.road)}">×</button>
     </article>
   `).join("")
 }
