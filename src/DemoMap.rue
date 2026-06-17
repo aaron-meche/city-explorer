@@ -7,6 +7,17 @@
     background-size: 3.8rem 3.8rem, 4.6rem 4.6rem
 }
 
+.street-view-surface {
+    position: absolute
+    inset: 0
+    display: none
+    background: #dfe7e2
+}
+
+.street-view-surface.active {
+    display: block
+}
+
 .demo-map:before {
     content: ""
     position: absolute
@@ -267,4 +278,11 @@ export component DemoMap() {
         new Wrapper("5", { className: "waypoint waypoint-five", attrs: { "data-waypoint": "4" } })
         new UIElement({ className: "heading-cone", content: "" })
     ]
+}
+
+export component StreetViewSurface() {
+    className: "street-view-surface"
+    id: "streetViewSurface"
+    aria: { label: "Google Street View panorama" }
+    content: ""
 }

@@ -1,6 +1,6 @@
 import { Navigation } from "./Navigation.rue"
 import { MapSearch, MapTypeSelector, ZoomControls } from "./MapControls.rue"
-import { DemoMap } from "./DemoMap.rue"
+import { DemoMap, StreetViewSurface } from "./DemoMap.rue"
 import { PlacePanel, RoutePanel } from "./Panels.rue"
 import { PreferencesPanel } from "./Preferences.rue"
 
@@ -60,7 +60,7 @@ export component ExplorerShell() {
                     aria: {
                         label: "Map exploration workspace"
                     }
-                    content: DemoMap()
+                    content: [DemoMap(), StreetViewSurface()]
                 })
                 MapSearch()
                 MapTypeSelector()

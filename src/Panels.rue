@@ -151,6 +151,12 @@
     font-size: 0.8rem
 }
 
+.provider-status {
+    color: var(--route)
+    font-size: 0.68rem
+    font-weight: 720
+}
+
 .place-road {
     display: flex
     align-items: center
@@ -390,6 +396,7 @@ export component PlacePanel() {
             className: "place-header"
             content: [
                 new Wrapper("New Orleans, Louisiana", { className: "place-region", id: "currentRegion" })
+                new Wrapper("Demo mode ready", { className: "provider-status", id: "providerStatus", attrs: { role: "status" } })
                 new UIElement({ tag: "strong", className: "place-road", id: "currentRoad", content: "Canal Street" })
             ]
         })

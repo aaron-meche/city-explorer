@@ -1,5 +1,6 @@
 import { defaultRouteId, routes } from "./data/routes.js"
 import { readJson, writeJson } from "./lib/storage.js"
+import { GoogleStreetViewProvider } from "./providers/street-view.js"
 
 const sessionKey = "mapExplorer.session.v1"
 const discoveriesKey = "mapExplorer.discoveries.v1"
@@ -7,6 +8,7 @@ const preferencesKey = "mapExplorer.preferences.v1"
 const googleKey = "mapExplorer.googleMapsKey"
 const savedSession = readJson(sessionKey, {})
 const savedPreferences = readJson(preferencesKey, {})
+const streetViewProvider = new GoogleStreetViewProvider()
 
 const state = {
   routeId: routes[savedSession.routeId] ? savedSession.routeId : defaultRouteId,
@@ -107,6 +109,12 @@ document.getElementById("speedSelect")?.addEventListener("change", event => {
 })
 
 document.addEventListener("click", event => {
+  const providerButton = event.target.closest("[data-provider]")
+  if (providerButton) {
+    selectProvider(providerButton.dataset.provider)
+    return
+  }
+
   const navigation = event.target.closest("[data-screen]")
   if (navigation) {
     setActiveScreen(navigation.dataset.screen)
@@ -158,6 +166,34 @@ document.addEventListener("click", event => {
   const direction = Number(stepButton.dataset.stepDirection)
   setStep(state.step + direction)
 })
+
+async function selectProvider(provider) {
+  const demoMap = document.getElementById("demoMap")
+  const streetView = document.getElementById("streetViewSurface")
+
+  if (provider === "demo") {
+    streetViewProvider.deactivate()
+    state.provider = "demo"
+    demoMap?.classList.remove("hidden")
+    streetView?.classList.remove("active")
+    setText("providerStatus", "Demo mode ready")
+    return
+  }
+
+  const key = document.getElementById("googleMapsKey")?.value.trim() || window.localStorage.getItem(googleKey) || ""
+  setText("providerStatus", "Loading Street View…")
+  await streetViewProvider.activate({
+    key,
+    container: streetView,
+    position: { lat: activeStep().lat, lng: activeStep().lng },
+    heading: activeStep().heading
+  })
+  state.provider = "google"
+  demoMap?.classList.add("hidden")
+  streetView?.classList.add("active")
+  setText("providerStatus", "Google Street View ready")
+  setActiveScreen("explore")
+}
 
 function setActiveScreen(screen) {
   document.querySelectorAll("[data-screen]").forEach(button => {

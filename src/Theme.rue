@@ -105,6 +105,12 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     cursor: not-allowed
 }
 
+.button-row {
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 0.55rem
+}
+
 .field {
     width: 100%
     min-height: 2.65rem

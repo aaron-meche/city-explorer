@@ -136,6 +136,7 @@ export component PreferencesPanel() {
                             new UIElement({ tag: "h3", content: "Provider" })
                             new UIElement({ className: "preference-field", content: [new UIElement({ tag: "label", for: "googleMapsKey", content: "Google Maps API key" }), new UIElement({ tag: "input", type: "password", id: "googleMapsKey", className: "field", autocomplete: "off", placeholder: "Stored only in this browser" })] })
                             new Wrapper("Demo mode remains available without a key.", { className: "muted" })
+                            new UIElement({ className: "button-row", content: [new Button("Load Street View", { className: "button primary", type: "button", attrs: { "data-provider": "google" } }), new Button("Use Demo", { className: "button", type: "button", attrs: { "data-provider": "demo" } })] })
                         ]
                     })
                     new Button("Save Preferences", { className: "button primary", type: "submit" })
