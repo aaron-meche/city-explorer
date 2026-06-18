@@ -1,6 +1,7 @@
 import { defaultRouteId, routes } from "./data/routes.js"
 import { explorationStrategies, strategyStep } from "./data/strategies.js"
 import { readJson, writeJson } from "./lib/storage.js"
+import { formatCoordinates, formatDistance, sentenceCase, stepTelemetry } from "./lib/telemetry.js"
 import { GoogleStreetViewProvider } from "./providers/street-view.js"
 
 const sessionKey = "mapExplorer.session.v1"
@@ -348,21 +349,24 @@ function stopAutoDrive() {
 
 function renderRouteProgress() {
   const current = activeStep()
+  const telemetry = stepTelemetry(route(), current, state.units)
 
-  setText("routeName", `${route().city} — ${route().name}`)
-  setText("currentRegion", `${route().city}, ${route().region}`)
-  setText("currentRoad", current.road)
-  setText("headingMetric", `${current.heading}°`)
-  setText("distanceMetric", formatDistance(current.distanceMiles))
+  setText("routeName", telemetry.routeName)
+  setText("currentRegion", telemetry.region)
+  setText("currentRoad", telemetry.road)
+  setText("headingMetric", telemetry.heading)
+  setText("distanceMetric", telemetry.distance)
   setText("stepMetric", `Step ${state.step + 1} of ${route().steps.length}`)
-  setText("coordinatesMetric", formatCoordinates(current.lat, current.lng))
-  setText("roadClassMetric", sentenceCase(current.roadClass))
-  setText("elevationMetric", formatElevation(current.elevationFt))
-  setText("riverMileMetric", current.riverMileAHP == null ? "—" : `Mile ${current.riverMileAHP} AHP`)
-  setText("gridBearingMetric", current.gridBearing)
-  setText("surfaceMetric", `${sentenceCase(current.surface)} · ${formatGrade(current.gradePercent)}`)
+  setText("coordinatesMetric", telemetry.coordinates)
+  setText("roadClassMetric", telemetry.roadClass)
+  setText("elevationMetric", telemetry.elevation)
+  setText("riverMileMetric", telemetry.riverMile)
+  setText("gridBearingMetric", telemetry.gridBearing)
+  setText("surfaceMetric", telemetry.surface)
   setText("modeSummary", explorationStrategies[state.mode]?.label ?? "Scenic Roads")
   setText("strategyHint", explorationStrategies[state.mode]?.mapHint ?? explorationStrategies.scenic.mapHint)
+
+  renderRouteList()
 
   document.querySelectorAll("[data-route-step]").forEach((element, index) => {
     element.classList.toggle("active", index === state.step)
@@ -411,38 +415,26 @@ function renderDiscoveries() {
   `).join("")
 }
 
+function renderRouteList() {
+  const list = document.getElementById("routeList")
+  if (!list) return
+
+  list.innerHTML = route().steps.map((step, index) => `
+    <li class="route-step${index === state.step ? " active" : ""}" data-route-step="${index}">
+      <span class="step-number">${index + 1}</span>
+      <span>${escapeHtml(step.instruction)}</span>
+      <span class="step-distance">${escapeHtml(formatStepDistance(step.distanceMiles))}</span>
+    </li>
+  `).join("")
+}
+
 function setText(id, value) {
   const element = document.getElementById(id)
   if (element) element.textContent = value
 }
 
-function formatCoordinates(lat, lng) {
-  const latitude = `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? "N" : "S"}`
-  const longitude = `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? "E" : "W"}`
-  return `${latitude}, ${longitude}`
-}
-
-function sentenceCase(value) {
-  const text = String(value ?? "")
-  return text ? text[0].toUpperCase() + text.slice(1) : "—"
-}
-
-function formatGrade(grade) {
-  const value = Number(grade)
-  if (!Number.isFinite(value)) return "—"
-  return `${value > 0 ? "+" : ""}${value.toFixed(1)}% grade`
-}
-
-function formatDistance(miles) {
-  return state.units === "metric"
-    ? `${(miles * 1.60934).toFixed(1)} km`
-    : `${miles.toFixed(1)} mi`
-}
-
-function formatElevation(feet) {
-  return state.units === "metric"
-    ? `${Math.round(feet * 0.3048)} m`
-    : `${feet} ft`
+function formatStepDistance(miles) {
+  return formatDistance(miles, state.units)
 }
 
 function escapeHtml(value) {
