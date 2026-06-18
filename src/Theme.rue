@@ -131,3 +131,11 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .muted {
     color: var(--muted)
 }
+
+.strategy-hint {
+    display: block
+    padding: 0 1rem 0.8rem
+    border-bottom: solid 1px var(--border)
+    font-size: 0.72rem
+    line-height: 1.4
+}

@@ -1,4 +1,5 @@
 import { defaultRouteId, routes } from "./data/routes.js"
+import { explorationStrategies, strategyStep } from "./data/strategies.js"
 import { readJson, writeJson } from "./lib/storage.js"
 import { GoogleStreetViewProvider } from "./providers/street-view.js"
 
@@ -325,7 +326,7 @@ function startAutoDrive() {
       stopAutoDrive()
       return
     }
-    navigateStep(1)
+    navigateStep(strategyStep(state.mode, state.step))
   }, state.speedMs)
   renderRouteProgress()
 }
@@ -351,6 +352,8 @@ function renderRouteProgress() {
   setText("riverMileMetric", current.riverMileAHP == null ? "—" : `Mile ${current.riverMileAHP} AHP`)
   setText("gridBearingMetric", current.gridBearing)
   setText("surfaceMetric", `${sentenceCase(current.surface)} · ${formatGrade(current.gradePercent)}`)
+  setText("modeSummary", explorationStrategies[state.mode]?.label ?? "Scenic Roads")
+  setText("strategyHint", explorationStrategies[state.mode]?.mapHint ?? explorationStrategies.scenic.mapHint)
 
   document.querySelectorAll("[data-route-step]").forEach((element, index) => {
     element.classList.toggle("active", index === state.step)
@@ -479,7 +482,7 @@ function hydrateSessionControls() {
   if (mode) mode.value = state.mode
   if (units) units.value = state.units
   if (key) key.value = window.localStorage.getItem(googleKey) || ""
-  setText("modeSummary", sentenceCase(state.mode))
+  setText("modeSummary", explorationStrategies[state.mode]?.label ?? "Scenic Roads")
 }
 
 hydrateSessionControls()

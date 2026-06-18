@@ -371,6 +371,10 @@ export component RoutePanel() {
                 new Wrapper("Scenic Roads", { className: "compact-select", id: "modeSummary" })
             ]
         })
+        new Wrapper("Look for shade, water, old rights-of-way, and street-wall changes.", {
+            className: "muted strategy-hint"
+            id: "strategyHint"
+        })
         new UIElement({
             tag: "ol"
             className: "route-list"
