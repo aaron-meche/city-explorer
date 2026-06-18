@@ -22,7 +22,8 @@ const state = {
   zoom: Number(savedSession.zoom) || 14,
   discoveries: readJson(discoveriesKey, []),
   mode: savedPreferences.mode || "scenic",
-  units: savedPreferences.units || "imperial"
+  units: savedPreferences.units || "imperial",
+  provider: "demo"
 }
 
 const route = () => routes[state.routeId]
@@ -164,7 +165,7 @@ document.addEventListener("click", event => {
   if (!stepButton) return
 
   const direction = Number(stepButton.dataset.stepDirection)
-  setStep(state.step + direction)
+  navigateStep(direction)
 })
 
 async function selectProvider(provider) {
@@ -182,17 +183,33 @@ async function selectProvider(provider) {
 
   const key = document.getElementById("googleMapsKey")?.value.trim() || window.localStorage.getItem(googleKey) || ""
   setText("providerStatus", "Loading Street View…")
-  await streetViewProvider.activate({
-    key,
-    container: streetView,
-    position: { lat: activeStep().lat, lng: activeStep().lng },
-    heading: activeStep().heading
-  })
-  state.provider = "google"
-  demoMap?.classList.add("hidden")
-  streetView?.classList.add("active")
-  setText("providerStatus", "Google Street View ready")
-  setActiveScreen("explore")
+  try {
+    await streetViewProvider.activate({
+      key,
+      container: streetView,
+      position: { lat: activeStep().lat, lng: activeStep().lng },
+      heading: activeStep().heading
+    })
+    state.provider = "google"
+    demoMap?.classList.add("hidden")
+    streetView?.classList.add("active")
+    setText("providerStatus", "Google Street View ready")
+    setActiveScreen("explore")
+  } catch (error) {
+    console.error(error)
+    state.provider = "demo"
+    demoMap?.classList.remove("hidden")
+    streetView?.classList.remove("active")
+    setText("providerStatus", "Street View unavailable · demo mode ready")
+  }
+}
+
+function navigateStep(direction) {
+  if (state.provider === "google") {
+    const moved = streetViewProvider.move(direction)
+    if (!moved) setText("providerStatus", "No linked panorama · route step used")
+  }
+  setStep(state.step + direction)
 }
 
 function setActiveScreen(screen) {
@@ -308,7 +325,7 @@ function startAutoDrive() {
       stopAutoDrive()
       return
     }
-    setStep(state.step + 1)
+    navigateStep(1)
   }, state.speedMs)
   renderRouteProgress()
 }

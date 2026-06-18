@@ -37,6 +37,29 @@ export class GoogleStreetViewProvider {
   getHeading() {
     return this.panorama?.getPov?.().heading ?? null
   }
+
+  move(direction = 1) {
+    if (!this.panorama) return false
+    const links = this.panorama.getLinks?.() ?? []
+    if (!links.length) return false
+
+    const currentHeading = this.getHeading() ?? 0
+    const ordered = [...links].sort((a, b) => {
+      const aDelta = headingDelta(a.heading ?? currentHeading, currentHeading)
+      const bDelta = headingDelta(b.heading ?? currentHeading, currentHeading)
+      return aDelta - bDelta
+    })
+    const next = direction >= 0 ? ordered[0] : ordered[ordered.length - 1]
+    if (!next?.pano) return false
+
+    this.panorama.setPano(next.pano)
+    this.panorama.setPov({ heading: next.heading ?? currentHeading, pitch: 0 })
+    return true
+  }
+}
+
+function headingDelta(a, b) {
+  return Math.abs((((a - b) % 360) + 540) % 360 - 180)
 }
 
 function loadGoogleMaps(key) {
