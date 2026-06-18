@@ -42,6 +42,14 @@ const searchInput = document.getElementById("mapSearchInput")
 const searchResults = document.getElementById("searchResults")
 const discoveryForm = document.getElementById("discoveryForm")
 const preferencesForm = document.getElementById("preferencesForm")
+const routeSelect = document.getElementById("routeSelect")
+
+routeSelect?.addEventListener("change", event => {
+  state.routeId = event.target.value
+  state.step = 0
+  persistSession()
+  renderRouteProgress()
+})
 
 preferencesForm?.addEventListener("submit", event => {
   event.preventDefault()
@@ -341,6 +349,7 @@ function stopAutoDrive() {
 function renderRouteProgress() {
   const current = activeStep()
 
+  setText("routeName", `${route().city} — ${route().name}`)
   setText("currentRegion", `${route().city}, ${route().region}`)
   setText("currentRoad", current.road)
   setText("headingMetric", `${current.heading}°`)
@@ -371,6 +380,7 @@ function renderRouteProgress() {
   const back = document.querySelector('[data-step-direction="-1"]')
   const next = document.querySelector('[data-step-direction="1"]')
   const autoDrive = document.getElementById("autoDriveButton")
+  if (routeSelect) routeSelect.value = state.routeId
   document.body.classList.toggle("is-driving", state.running)
   if (back) back.disabled = state.step === 0
   if (next) next.disabled = state.step === route().steps.length - 1

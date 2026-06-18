@@ -345,6 +345,27 @@ export component RoutePanel() {
             ]
         })
         new UIElement({
+            className: "route-picker"
+            content: [
+                new UIElement({
+                    tag: "label"
+                    for: "routeSelect"
+                    className: "sr-only"
+                    content: "Choose route"
+                })
+                new UIElement({
+                    tag: "select"
+                    id: "routeSelect"
+                    className: "field"
+                    content: [
+                        new UIElement({ tag: "option", value: "new-orleans-french-quarter", content: "New Orleans — French Quarter Loop" })
+                        new UIElement({ tag: "option", value: "san-francisco-waterfront", content: "San Francisco — Waterfront and Hills" })
+                        new UIElement({ tag: "option", value: "chicago-lakefront-grid", content: "Chicago — Lakefront Grid" })
+                    ]
+                })
+            ]
+        })
+        new UIElement({
             className: "route-transport"
             aria: { label: "Route transport controls" }
             content: [

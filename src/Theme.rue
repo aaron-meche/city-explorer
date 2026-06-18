@@ -139,3 +139,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
     font-size: 0.72rem
     line-height: 1.4
 }
+
+.route-picker {
+    padding: 0.85rem 1rem 0
+}
