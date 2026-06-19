@@ -1,0 +1,125 @@
+.guesser-workspace {
+    position: absolute
+    inset: 0
+    z-index: 20
+    display: grid
+    grid-template-rows: auto minmax(0, 1fr)
+    background: #f5f8f5
+}
+
+.guesser-workspace.hidden {
+    display: none
+}
+
+.guesser-topbar {
+    min-height: 4rem
+    display: flex
+    align-items: center
+    justify-content: space-between
+    gap: 1rem
+    padding: 0.85rem 1.35rem
+    border-bottom: solid 1px var(--border)
+    background: rgba(255, 255, 255, 0.96)
+}
+
+.guesser-title {
+    display: grid
+    gap: 0.12rem
+}
+
+.guesser-title strong {
+    font-size: 0.98rem
+}
+
+.guesser-title span {
+    color: var(--muted)
+    font-size: 0.75rem
+}
+
+.guesser-scoreboard {
+    display: flex
+    align-items: center
+    gap: 1rem
+    color: var(--muted)
+    font-size: 0.78rem
+    font-weight: 700
+}
+
+.guesser-stage {
+    position: relative
+    overflow: hidden
+    background: linear-gradient(180deg, #d9e9e3, #eff3e9 55%, #c9b99b 56%, #a8845f)
+}
+
+.guesser-panorama {
+    position: absolute
+    inset: 0
+    display: grid
+    place-items: center
+    color: rgba(20, 32, 25, 0.72)
+    font-size: 1.4rem
+    font-weight: 780
+    letter-spacing: 0.02em
+}
+
+.guess-map {
+    position: absolute
+    right: 1.35rem
+    bottom: 1.35rem
+    width: 22rem
+    height: 16rem
+    border: solid 1px var(--border)
+    border-radius: var(--radius)
+    background: var(--canvas)
+    box-shadow: var(--shadow)
+    overflow: hidden
+}
+
+.guess-map:before {
+    content: ""
+    position: absolute
+    inset: 0
+    background-image: linear-gradient(30deg, transparent 48%, rgba(20, 32, 25, 0.12) 49%, rgba(20, 32, 25, 0.12) 50%, transparent 51%), linear-gradient(110deg, transparent 48%, rgba(20, 32, 25, 0.1) 49%, rgba(20, 32, 25, 0.1) 50%, transparent 51%)
+    background-size: 2.7rem 2.7rem
+}
+
+.guess-map-label {
+    position: absolute
+    left: 0.8rem
+    top: 0.7rem
+    z-index: 1
+    font-size: 0.76rem
+    font-weight: 760
+}
+
+.guess-controls {
+    position: absolute
+    left: 1.35rem
+    bottom: 1.35rem
+    display: flex
+    gap: 0.6rem
+}
+
+export component GuesserWorkspace() {
+    tag: "section"
+    className: "guesser-workspace hidden"
+    id: "guesserWorkspace"
+    aria: { label: "Guesser challenge" }
+    content: [
+        new UIElement({
+            className: "guesser-topbar"
+            content: [
+                new UIElement({ className: "guesser-title", content: [new UIElement({ tag: "strong", id: "guesserRoundTitle", content: "Round 1 · City roads" }), new Wrapper("Find the drop point from street clues, not vibes.", { id: "guesserHint" })] })
+                new UIElement({ className: "guesser-scoreboard", content: [new Wrapper("Score 0", { id: "guesserScore" }), new Wrapper("0.0 mi error", { id: "guesserError" })] })
+            ]
+        })
+        new UIElement({
+            className: "guesser-stage"
+            content: [
+                new UIElement({ className: "guesser-panorama", id: "guesserPanorama", content: "Street View clue surface" })
+                new UIElement({ className: "guess-map", id: "guessMap", role: "button", tabindex: "0", aria: { label: "Place your guess on the mini map" }, content: [new Wrapper("Guess map", { className: "guess-map-label" })] })
+                new UIElement({ className: "guess-controls", content: [new Button("Start Round", { className: "button primary", id: "startGuesserRound" }), new Button("Submit Guess", { className: "button", id: "submitGuess" })] })
+            ]
+        })
+    ]
+}

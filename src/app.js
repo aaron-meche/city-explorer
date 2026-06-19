@@ -235,6 +235,13 @@ function setActiveScreen(screen) {
   const showPreferences = screen === "preferences"
   preferences?.classList.toggle("hidden", !showPreferences)
   preferences?.setAttribute("aria-hidden", String(!showPreferences))
+
+  const guesser = document.getElementById("guesserWorkspace")
+  const showGuesser = screen === "guesser"
+  guesser?.classList.toggle("hidden", !showGuesser)
+
+  document.getElementById("routePanel")?.classList.toggle("hidden", showGuesser)
+  document.getElementById("placePanel")?.classList.toggle("hidden", showGuesser)
 }
 
 function applyMapType(type) {

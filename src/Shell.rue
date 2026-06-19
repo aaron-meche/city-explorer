@@ -3,6 +3,7 @@ import { MapSearch, MapTypeSelector, ZoomControls } from "./MapControls.rue"
 import { DemoMap, StreetViewSurface } from "./DemoMap.rue"
 import { PlacePanel, RoutePanel } from "./Panels.rue"
 import { PreferencesPanel } from "./Preferences.rue"
+import { GuesserWorkspace } from "./Guesser.rue"
 
 .app-shell {
     width: 100vw
@@ -67,6 +68,7 @@ export component ExplorerShell() {
                 ZoomControls()
                 RoutePanel()
                 PlacePanel()
+                GuesserWorkspace()
                 PreferencesPanel()
             ]
         })

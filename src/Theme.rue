@@ -143,3 +143,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .route-picker {
     padding: 0.85rem 1rem 0
 }
+
+.hidden {
+    display: none !important
+}
