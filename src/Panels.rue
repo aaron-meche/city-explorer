@@ -131,6 +131,49 @@
     font-variant-numeric: tabular-nums
 }
 
+.trip-summary {
+    display: grid
+    grid-template-columns: repeat(3, 1fr)
+    gap: 0.45rem
+    padding: 0.85rem 1rem
+    border-top: solid 1px var(--border)
+    background: linear-gradient(180deg, rgba(231, 244, 236, 0.5), rgba(255, 255, 255, 0))
+}
+
+.trip-stat {
+    display: grid
+    gap: 0.18rem
+}
+
+.trip-stat strong {
+    font-size: 0.88rem
+    font-variant-numeric: tabular-nums
+}
+
+.trip-stat span {
+    color: var(--muted)
+    font-size: 0.62rem
+    font-weight: 720
+    letter-spacing: 0.05em
+    text-transform: uppercase
+}
+
+.history-list {
+    max-height: 8rem
+    overflow: auto
+    padding: 0 1rem 1rem
+    display: grid
+    gap: 0.35rem
+}
+
+.history-item {
+    display: flex
+    justify-content: space-between
+    gap: 0.8rem
+    color: var(--muted)
+    font-size: 0.68rem
+}
+
 .place-panel {
     right: 1.35rem
     bottom: 2.25rem
@@ -408,6 +451,16 @@ export component RoutePanel() {
                 new UIElement({ tag: "li", className: "route-step", attrs: { "data-route-step": "4" }, content: [new Wrapper("5", { className: "step-number" }), new Wrapper("Turn left on Basin Street"), new Wrapper("3.1 mi", { className: "step-distance" })] })
             ]
         })
+        new UIElement({
+            className: "trip-summary"
+            aria: { label: "Trip summary" }
+            content: [
+                new UIElement({ className: "trip-stat", content: [new UIElement({ tag: "strong", id: "tripDistance", content: "0.8 mi" }), new Wrapper("distance") ] })
+                new UIElement({ className: "trip-stat", content: [new UIElement({ tag: "strong", id: "tripSteps", content: "1" }), new Wrapper("moves") ] })
+                new UIElement({ className: "trip-stat", content: [new UIElement({ tag: "strong", id: "tripRoadClasses", content: "1" }), new Wrapper("classes") ] })
+            ]
+        })
+        new UIElement({ id: "historyList", className: "history-list", aria: { label: "Route history" }, content: "" })
     ]
 }
 

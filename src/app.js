@@ -7,6 +7,7 @@ import { GoogleStreetViewProvider } from "./providers/street-view.js"
 const sessionKey = "mapExplorer.session.v1"
 const discoveriesKey = "mapExplorer.discoveries.v1"
 const preferencesKey = "mapExplorer.preferences.v1"
+const historyKey = "mapExplorer.history.v1"
 const googleKey = "mapExplorer.googleMapsKey"
 const savedSession = readJson(sessionKey, {})
 const savedPreferences = readJson(preferencesKey, {})
@@ -28,6 +29,8 @@ const state = {
   provider: "demo"
 }
 
+const routeHistory = Array.isArray(readJson(historyKey, [])) ? readJson(historyKey, []) : []
+
 const route = () => routes[state.routeId]
 const activeStep = () => route().steps[state.step]
 const clampStep = value => Math.max(0, Math.min(route().steps.length - 1, value))
@@ -48,6 +51,7 @@ const routeSelect = document.getElementById("routeSelect")
 routeSelect?.addEventListener("change", event => {
   state.routeId = event.target.value
   state.step = 0
+  recordHistory("route", activeStep())
   persistSession()
   renderRouteProgress()
 })
@@ -318,7 +322,9 @@ function selectSearchResult(result) {
 }
 
 function setStep(nextStep) {
+  const before = activeStep()
   state.step = clampStep(nextStep)
+  if (activeStep().id !== before.id) recordHistory("move", activeStep())
   persistSession()
   renderRouteProgress()
 }
@@ -367,6 +373,7 @@ function renderRouteProgress() {
   setText("strategyHint", explorationStrategies[state.mode]?.mapHint ?? explorationStrategies.scenic.mapHint)
 
   renderRouteList()
+  renderTripSummary()
 
   document.querySelectorAll("[data-route-step]").forEach((element, index) => {
     element.classList.toggle("active", index === state.step)
@@ -425,6 +432,38 @@ function renderRouteList() {
       <span>${escapeHtml(step.instruction)}</span>
       <span class="step-distance">${escapeHtml(formatStepDistance(step.distanceMiles))}</span>
     </li>
+  `).join("")
+}
+
+function recordHistory(type, step) {
+  routeHistory.unshift({
+    type,
+    routeId: state.routeId,
+    step: state.step,
+    road: step.road,
+    roadClass: step.roadClass,
+    distanceMiles: step.distanceMiles,
+    at: new Date().toISOString()
+  })
+  routeHistory.splice(24)
+  writeJson(historyKey, routeHistory)
+}
+
+function renderTripSummary() {
+  const visited = routeHistory.filter(item => item.routeId === state.routeId)
+  const roadClasses = new Set(visited.map(item => item.roadClass).filter(Boolean))
+  const distance = activeStep().distanceMiles
+  setText("tripDistance", formatStepDistance(distance))
+  setText("tripSteps", String(Math.max(1, visited.length)))
+  setText("tripRoadClasses", String(Math.max(1, roadClasses.size)))
+
+  const list = document.getElementById("historyList")
+  if (!list) return
+  list.innerHTML = visited.slice(0, 5).map(item => `
+    <div class="history-item">
+      <span>${escapeHtml(item.road)}</span>
+      <span>${escapeHtml(sentenceCase(item.roadClass))}</span>
+    </div>
   `).join("")
 }
 
