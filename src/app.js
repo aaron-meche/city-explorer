@@ -136,6 +136,17 @@ document.addEventListener("click", event => {
     return
   }
 
+  if (event.target.closest("#submitGuess")) {
+    submitGuess()
+    return
+  }
+
+  const guessMap = event.target.closest("#guessMap")
+  if (guessMap) {
+    placeGuess(event, guessMap)
+    return
+  }
+
   const providerButton = event.target.closest("[data-provider]")
   if (providerButton) {
     selectProvider(providerButton.dataset.provider)
@@ -207,6 +218,42 @@ function startGuesserRound() {
   setText("guesserError", "place your guess")
   setText("guesserPanorama", `${targetRoute.city} clue · ${targetStep.road}`)
   document.getElementById("guessMap")?.classList.remove("has-guess", "revealed")
+}
+
+function placeGuess(event, map) {
+  if (guesserState.roundIndex < 0) startGuesserRound()
+  const rect = map.getBoundingClientRect()
+  const x = clamp((event.clientX - rect.left) / rect.width, 0, 1)
+  const y = clamp((event.clientY - rect.top) / rect.height, 0, 1)
+  const round = guesserRounds[guesserState.roundIndex]
+  const center = routes[round.routeId].center
+  const lat = center.lat + (0.08 - y * 0.16)
+  const lng = center.lng + (x * 0.16 - 0.08)
+
+  guesserState.guess = { lat, lng, x, y }
+  const marker = document.getElementById("guessMarker")
+  if (marker) {
+    marker.style.left = `${x * 100}%`
+    marker.style.top = `${y * 100}%`
+  }
+  map.classList.add("has-guess")
+  setText("guesserError", formatCoordinates(lat, lng))
+}
+
+function submitGuess() {
+  if (guesserState.roundIndex < 0) startGuesserRound()
+  if (!guesserState.guess) {
+    setText("guesserError", "place a guess first")
+    return
+  }
+
+  const round = guesserRounds[guesserState.roundIndex]
+  const errorMiles = haversineMiles(guesserState.guess, round.answer)
+  const roundScore = Math.max(0, Math.round(5000 * Math.exp(-errorMiles / 25)))
+  guesserState.score += roundScore
+  guesserState.revealed = true
+  setText("guesserScore", `Score ${guesserState.score}`)
+  setText("guesserError", `${errorMiles.toFixed(1)} mi error · +${roundScore}`)
 }
 
 async function selectProvider(provider) {
@@ -508,6 +555,24 @@ function setText(id, value) {
 
 function formatStepDistance(miles) {
   return formatDistance(miles, state.units)
+}
+
+function haversineMiles(a, b) {
+  const radiusMiles = 3958.7613
+  const lat1 = toRadians(a.lat)
+  const lat2 = toRadians(b.lat)
+  const deltaLat = toRadians(b.lat - a.lat)
+  const deltaLng = toRadians(b.lng - a.lng)
+  const value = Math.sin(deltaLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2
+  return radiusMiles * 2 * Math.atan2(Math.sqrt(value), Math.sqrt(1 - value))
+}
+
+function toRadians(degrees) {
+  return degrees * Math.PI / 180
+}
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value))
 }
 
 function escapeHtml(value) {

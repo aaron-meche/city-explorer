@@ -92,6 +92,25 @@
     font-weight: 760
 }
 
+.guess-marker {
+    position: absolute
+    z-index: 2
+    width: 1rem
+    height: 1rem
+    left: 50%
+    top: 50%
+    border: solid 2px white
+    border-radius: 999px
+    background: var(--route)
+    box-shadow: var(--shadow-small)
+    transform: translate(-50%, -50%)
+    display: none
+}
+
+.guess-map.has-guess .guess-marker {
+    display: block
+}
+
 .guess-controls {
     position: absolute
     left: 1.35rem
@@ -117,7 +136,7 @@ export component GuesserWorkspace() {
             className: "guesser-stage"
             content: [
                 new UIElement({ className: "guesser-panorama", id: "guesserPanorama", content: "Street View clue surface" })
-                new UIElement({ className: "guess-map", id: "guessMap", role: "button", tabindex: "0", aria: { label: "Place your guess on the mini map" }, content: [new Wrapper("Guess map", { className: "guess-map-label" })] })
+                new UIElement({ className: "guess-map", id: "guessMap", role: "button", tabindex: "0", aria: { label: "Place your guess on the mini map" }, content: [new Wrapper("Guess map", { className: "guess-map-label" }), new UIElement({ className: "guess-marker", id: "guessMarker", content: "" })] })
                 new UIElement({ className: "guess-controls", content: [new Button("Start Round", { className: "button primary", id: "startGuesserRound" }), new Button("Submit Guess", { className: "button", id: "submitGuess" })] })
             ]
         })
