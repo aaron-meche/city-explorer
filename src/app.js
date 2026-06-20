@@ -35,7 +35,8 @@ const guesserState = {
   roundIndex: -1,
   score: 0,
   guess: null,
-  revealed: false
+  revealed: false,
+  rounds: []
 }
 
 const route = () => routes[state.routeId]
@@ -218,6 +219,7 @@ function startGuesserRound() {
   setText("guesserError", "place your guess")
   setText("guesserPanorama", `${targetRoute.city} clue · ${targetStep.road}`)
   document.getElementById("guessMap")?.classList.remove("has-guess", "revealed")
+  document.getElementById("roundSummary")?.classList.add("hidden")
 }
 
 function placeGuess(event, map) {
@@ -252,8 +254,17 @@ function submitGuess() {
   const roundScore = Math.max(0, Math.round(5000 * Math.exp(-errorMiles / 25)))
   guesserState.score += roundScore
   guesserState.revealed = true
+  guesserState.rounds.unshift({
+    title: round.title,
+    road: routes[round.routeId].steps[round.step].road,
+    city: routes[round.routeId].city,
+    errorMiles,
+    score: roundScore
+  })
   setText("guesserScore", `Score ${guesserState.score}`)
   setText("guesserError", `${errorMiles.toFixed(1)} mi error · +${roundScore}`)
+  document.getElementById("guessMap")?.classList.add("revealed")
+  renderRoundSummary()
 }
 
 async function selectProvider(provider) {
@@ -544,6 +555,19 @@ function renderTripSummary() {
     <div class="history-item">
       <span>${escapeHtml(item.road)}</span>
       <span>${escapeHtml(sentenceCase(item.roadClass))}</span>
+    </div>
+  `).join("")
+}
+
+function renderRoundSummary() {
+  const summary = document.getElementById("roundSummary")
+  const list = document.getElementById("roundSummaryList")
+  if (!summary || !list) return
+  summary.classList.remove("hidden")
+  list.innerHTML = guesserState.rounds.slice(0, 4).map(item => `
+    <div>
+      <strong>${escapeHtml(item.city)} · ${escapeHtml(item.road)}</strong><br>
+      ${item.errorMiles.toFixed(1)} mi error · ${item.score} points
     </div>
   `).join("")
 }
