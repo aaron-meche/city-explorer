@@ -1,4 +1,5 @@
 import { defaultRouteId, routes } from "./data/routes.js"
+import { guesserRounds } from "./data/guesser.js"
 import { explorationStrategies, strategyStep } from "./data/strategies.js"
 import { readJson, writeJson } from "./lib/storage.js"
 import { formatCoordinates, formatDistance, sentenceCase, stepTelemetry } from "./lib/telemetry.js"
@@ -30,6 +31,12 @@ const state = {
 }
 
 const routeHistory = Array.isArray(readJson(historyKey, [])) ? readJson(historyKey, []) : []
+const guesserState = {
+  roundIndex: -1,
+  score: 0,
+  guess: null,
+  revealed: false
+}
 
 const route = () => routes[state.routeId]
 const activeStep = () => route().steps[state.step]
@@ -124,6 +131,11 @@ document.getElementById("speedSelect")?.addEventListener("change", event => {
 })
 
 document.addEventListener("click", event => {
+  if (event.target.closest("#startGuesserRound")) {
+    startGuesserRound()
+    return
+  }
+
   const providerButton = event.target.closest("[data-provider]")
   if (providerButton) {
     selectProvider(providerButton.dataset.provider)
@@ -181,6 +193,21 @@ document.addEventListener("click", event => {
   const direction = Number(stepButton.dataset.stepDirection)
   navigateStep(direction)
 })
+
+function startGuesserRound() {
+  guesserState.roundIndex = (guesserState.roundIndex + 1) % guesserRounds.length
+  guesserState.guess = null
+  guesserState.revealed = false
+  const round = guesserRounds[guesserState.roundIndex]
+  const targetRoute = routes[round.routeId]
+  const targetStep = targetRoute.steps[round.step]
+
+  setText("guesserRoundTitle", `Round ${guesserState.roundIndex + 1} · ${round.title}`)
+  setText("guesserHint", round.clue)
+  setText("guesserError", "place your guess")
+  setText("guesserPanorama", `${targetRoute.city} clue · ${targetStep.road}`)
+  document.getElementById("guessMap")?.classList.remove("has-guess", "revealed")
+}
 
 async function selectProvider(provider) {
   const demoMap = document.getElementById("demoMap")
