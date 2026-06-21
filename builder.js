@@ -26,7 +26,9 @@ if (file.getErrors().length) {
 fs.rmSync(outputRoot, { recursive: true, force: true })
 fs.mkdirSync(outputRoot, { recursive: true })
 
-const html = file.getHTML().replace("<title>Document</title>", "<title>Map Explorer</title>")
+const html = file.getHTML()
+  .replace("<title>Document</title>", "<title>Map Explorer</title>")
+  .replace("</head>", '<link rel="stylesheet" href="./styles/responsive.css">\n</head>')
 fs.writeFileSync(path.join(outputRoot, "index.html"), html)
 copyStaticFiles(sourceRoot, outputRoot)
 
