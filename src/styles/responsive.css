@@ -67,3 +67,131 @@
     width: 18rem;
   }
 }
+
+@media (max-width: 760px) {
+  body {
+    overflow: hidden;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+  }
+
+  .navigation {
+    gap: 0.55rem;
+    padding: 0 0.65rem;
+  }
+
+  .navigation-actions {
+    gap: 0;
+  }
+
+  .navigation-link {
+    min-width: auto;
+    padding: 0 0.45rem;
+    font-size: 0.72rem;
+  }
+
+  .map-selector-toggle {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .map-search {
+    top: 0.75rem;
+    left: 0.65rem;
+    right: 0.65rem;
+    width: auto;
+    height: 3.1rem;
+  }
+
+  .map-type-selector {
+    top: 4.25rem;
+    left: 0.65rem;
+    right: 0.65rem;
+    height: auto;
+    overflow-x: auto;
+  }
+
+  .map-type-button {
+    min-width: 4.2rem;
+  }
+
+  .route-panel,
+  .place-panel {
+    left: 0.65rem;
+    right: 0.65rem;
+    width: auto;
+    max-height: 47vh;
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  .route-panel {
+    bottom: 0;
+    z-index: 18;
+  }
+
+  .place-panel {
+    bottom: 0;
+    transform: translateY(calc(100% - 4.6rem));
+    z-index: 17;
+  }
+
+  .place-panel:focus-within,
+  .place-panel:hover {
+    transform: translateY(0);
+  }
+
+  .route-transport {
+    grid-template-columns: 1fr 1.25fr 1fr;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .route-list,
+  .history-list {
+    max-height: 18vh;
+    overflow: auto;
+  }
+
+  .zoom-controls {
+    right: 0.65rem;
+    bottom: 50vh;
+  }
+
+  .guesser-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .guess-map {
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: 5rem;
+    width: auto;
+    height: 13rem;
+  }
+
+  .round-summary {
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: 18.6rem;
+    width: auto;
+  }
+
+  .guess-controls {
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: 1rem;
+  }
+
+  .guess-controls .button {
+    flex: 1;
+  }
+
+  .preferences-panel {
+    width: 100%;
+  }
+}
