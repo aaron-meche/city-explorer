@@ -380,6 +380,7 @@ export component RoutePanel() {
     id: "routePanel"
     aria: { label: "Current route" }
     content: [
+        new UIElement({ tag: "h2", className: "sr-only", content: "Route controls and itinerary" })
         new UIElement({
             className: "panel-heading"
             content: [
@@ -470,6 +471,7 @@ export component PlacePanel() {
     id: "placePanel"
     aria: { label: "Current place details" }
     content: [
+        new UIElement({ tag: "h2", className: "sr-only", content: "Current place and discoveries" })
         new UIElement({
             className: "place-header"
             content: [

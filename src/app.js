@@ -313,7 +313,10 @@ function navigateStep(direction) {
 
 function setActiveScreen(screen) {
   document.querySelectorAll("[data-screen]").forEach(button => {
-    button.classList.toggle("active", button.dataset.screen === screen)
+    const active = button.dataset.screen === screen
+    button.classList.toggle("active", active)
+    if (active) button.setAttribute("aria-current", "page")
+    else button.removeAttribute("aria-current")
   })
 
   const preferences = document.getElementById("preferencesBackdrop")

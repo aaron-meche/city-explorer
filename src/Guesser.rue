@@ -166,6 +166,7 @@ export component GuesserWorkspace() {
     id: "guesserWorkspace"
     aria: { label: "Guesser challenge" }
     content: [
+        new UIElement({ tag: "h2", className: "sr-only", content: "Location guessing game" })
         new UIElement({
             className: "guesser-topbar"
             content: [

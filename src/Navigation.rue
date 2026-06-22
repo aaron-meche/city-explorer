@@ -150,6 +150,7 @@ export component Navigation() {
                 new Button("Explore", {
                     className: "navigation-link active"
                     attrs: { "data-screen": "explore" }
+                    aria: { current: "page" }
                     content: [new Wrapper("⌖", { className: "nav-symbol" }), "Explore"]
                 })
                 new Button("Guesser", {
