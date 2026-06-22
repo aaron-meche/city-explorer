@@ -29,6 +29,7 @@ fs.mkdirSync(outputRoot, { recursive: true })
 const html = file.getHTML()
   .replace("<title>Document</title>", "<title>Map Explorer</title>")
   .replace("</head>", '<link rel="stylesheet" href="./styles/responsive.css">\n</head>')
+  .replace("</head>", '<link rel="stylesheet" href="./styles/accessibility.css">\n</head>')
 fs.writeFileSync(path.join(outputRoot, "index.html"), html)
 copyStaticFiles(sourceRoot, outputRoot)
 
