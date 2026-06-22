@@ -122,6 +122,34 @@ searchInput?.addEventListener("keydown", event => {
   if (event.key === "Escape") searchResults?.classList.add("hidden")
 })
 
+document.addEventListener("keydown", event => {
+  const typingTarget = ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)
+  if (typingTarget && event.key !== "Escape") return
+
+  if (event.key === "/") {
+    event.preventDefault()
+    searchInput?.focus()
+    return
+  }
+
+  if (event.key === "ArrowLeft") {
+    event.preventDefault()
+    navigateStep(-1)
+    return
+  }
+
+  if (event.key === "ArrowRight") {
+    event.preventDefault()
+    navigateStep(1)
+    return
+  }
+
+  if (event.key.toLowerCase() === "g") setActiveScreen("guesser")
+  if (event.key.toLowerCase() === "e") setActiveScreen("explore")
+  if (event.key.toLowerCase() === "p") setActiveScreen("preferences")
+  if (event.key === "Escape") setActiveScreen("explore")
+})
+
 document.getElementById("speedSelect")?.addEventListener("change", event => {
   state.speedMs = Number(event.target.value)
   persistSession()
@@ -330,6 +358,10 @@ function setActiveScreen(screen) {
 
   document.getElementById("routePanel")?.classList.toggle("hidden", showGuesser)
   document.getElementById("placePanel")?.classList.toggle("hidden", showGuesser)
+
+  if (showPreferences) document.getElementById("preferenceMapType")?.focus()
+  else if (showGuesser) document.getElementById("startGuesserRound")?.focus()
+  else if (document.activeElement?.closest("#preferencesBackdrop, #guesserWorkspace")) searchInput?.focus()
 }
 
 function applyMapType(type) {
