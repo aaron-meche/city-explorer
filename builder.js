@@ -15,25 +15,31 @@ const sourceRoot = path.join(projectRoot, "src")
 const outputRoot = path.join(projectRoot, "out")
 const entryPath = path.join(sourceRoot, "main.rue")
 
-const source = resolveRueImports(entryPath)
-const file = new RueFile()
-file.feed(source)
-
-if (file.getErrors().length) {
-  throw new Error(`Rue build failed with ${file.getErrors().length} error(s).`)
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  build()
 }
 
-fs.rmSync(outputRoot, { recursive: true, force: true })
-fs.mkdirSync(outputRoot, { recursive: true })
+export function build() {
+  const source = resolveRueImports(entryPath)
+  const file = new RueFile()
+  file.feed(source)
 
-const html = file.getHTML()
-  .replace("<title>Document</title>", "<title>Map Explorer</title>")
-  .replace("</head>", '<link rel="stylesheet" href="./styles/responsive.css">\n</head>')
-  .replace("</head>", '<link rel="stylesheet" href="./styles/accessibility.css">\n</head>')
-fs.writeFileSync(path.join(outputRoot, "index.html"), html)
-copyStaticFiles(sourceRoot, outputRoot)
+  if (file.getErrors().length) {
+    throw new Error(`Rue build failed with ${file.getErrors().length} error(s).`)
+  }
 
-console.log(`Built Map Explorer to ${path.relative(projectRoot, outputRoot)}/`)
+  fs.rmSync(outputRoot, { recursive: true, force: true })
+  fs.mkdirSync(outputRoot, { recursive: true })
+
+  const html = file.getHTML()
+    .replace("<title>Document</title>", "<title>Map Explorer</title>")
+    .replace("</head>", '<link rel="stylesheet" href="./styles/responsive.css">\n</head>')
+    .replace("</head>", '<link rel="stylesheet" href="./styles/accessibility.css">\n</head>')
+  fs.writeFileSync(path.join(outputRoot, "index.html"), html)
+  copyStaticFiles(sourceRoot, outputRoot)
+
+  console.log(`Built Map Explorer to ${path.relative(projectRoot, outputRoot)}/`)
+}
 
 export function resolveRueImports(entryFile) {
   const visited = new Set()
