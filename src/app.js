@@ -304,12 +304,12 @@ async function selectProvider(provider) {
     state.provider = "demo"
     demoMap?.classList.remove("hidden")
     streetView?.classList.remove("active")
-    setText("providerStatus", "Demo mode ready")
+    setStatus("Demo mode ready", "ready", false)
     return
   }
 
   const key = document.getElementById("googleMapsKey")?.value.trim() || window.localStorage.getItem(googleKey) || ""
-  setText("providerStatus", "Loading Street View…")
+  setStatus("Loading Street View…", "loading")
   try {
     await streetViewProvider.activate({
       key,
@@ -320,21 +320,21 @@ async function selectProvider(provider) {
     state.provider = "google"
     demoMap?.classList.add("hidden")
     streetView?.classList.add("active")
-    setText("providerStatus", "Google Street View ready")
+    setStatus("Google Street View ready", "ready", false)
     setActiveScreen("explore")
   } catch (error) {
     console.error(error)
     state.provider = "demo"
     demoMap?.classList.remove("hidden")
     streetView?.classList.remove("active")
-    setText("providerStatus", "Street View unavailable · demo mode ready")
+    setStatus("Street View unavailable · demo mode ready", "error")
   }
 }
 
 function navigateStep(direction) {
   if (state.provider === "google") {
     const moved = streetViewProvider.move(direction)
-    if (!moved) setText("providerStatus", "No linked panorama · route step used")
+  if (!moved) setStatus("No linked panorama · route step used", "error")
   }
   setStep(state.step + direction)
 }
@@ -424,6 +424,10 @@ function renderSearchResults(query) {
       ? state.recentSearches
       : searchMatches("")
   searchResults.classList.remove("hidden")
+  if (!matches.length) {
+    searchResults.innerHTML = '<div class="saved-empty">No matching roads, cities, landmarks, or coordinates.</div>'
+    return
+  }
   searchResults.innerHTML = matches.map(match => `
     <button class="search-result" type="button" data-search-route="${escapeHtml(match.routeId)}" data-search-step="${match.step}">
       <strong>${escapeHtml(match.road)}</strong>
@@ -610,6 +614,15 @@ function renderRoundSummary() {
 function setText(id, value) {
   const element = document.getElementById(id)
   if (element) element.textContent = value
+}
+
+function setStatus(message, stateName = "ready", visible = true) {
+  setText("providerStatus", message)
+  const toast = document.getElementById("statusToast")
+  if (!toast) return
+  toast.textContent = message
+  toast.dataset.state = stateName
+  toast.classList.toggle("hidden", !visible)
 }
 
 function formatStepDistance(miles) {

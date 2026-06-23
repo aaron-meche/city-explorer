@@ -40,6 +40,27 @@ import { GuesserWorkspace } from "./Guesser.rue"
     z-index: 10
 }
 
+.status-toast {
+    left: 50%
+    top: 5.2rem
+    transform: translateX(-50%)
+    max-width: min(32rem, calc(100vw - 2rem))
+    padding: 0.75rem 1rem
+    color: var(--ink)
+    font-size: 0.78rem
+    font-weight: 700
+}
+
+.status-toast[data-state="error"] {
+    border-color: rgba(166, 61, 61, 0.45)
+    background: #fff3f3
+}
+
+.status-toast[data-state="loading"] {
+    border-color: rgba(173, 106, 22, 0.45)
+    background: #fff9ee
+}
+
 export component ExplorerShell() {
     className: "app-shell"
     content: [
@@ -69,6 +90,11 @@ export component ExplorerShell() {
                 MapSearch()
                 MapTypeSelector()
                 ZoomControls()
+                new Wrapper("Demo mode ready", {
+                    id: "statusToast"
+                    className: "status-toast panel workspace-layer hidden"
+                    attrs: { "data-state": "ready", role: "status" }
+                })
                 RoutePanel()
                 PlacePanel()
                 GuesserWorkspace()
