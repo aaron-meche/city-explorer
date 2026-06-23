@@ -48,6 +48,7 @@
 .map-search {
     top: 1.25rem
     left: 1.35rem
+    z-index: 26
     width: min(34rem, calc(100vw - 44rem))
     height: 3.65rem
     display: grid
@@ -55,6 +56,10 @@
     align-items: center
     gap: 0.7rem
     padding: 0 0.65rem 0 1rem
+}
+
+.map-search.workspace-layer {
+    z-index: 26
 }
 
 .search-symbol {

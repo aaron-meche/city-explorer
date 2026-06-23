@@ -140,6 +140,7 @@
   .place-panel:focus-within,
   .place-panel:hover {
     transform: translateY(0);
+    z-index: 20;
   }
 
   .route-transport {
