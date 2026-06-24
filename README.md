@@ -1,59 +1,74 @@
 # Map Explorer
 
-Rue-powered Street View exploration app for people who like maps, driving, and discovering cities.
+Rue-powered map and Street View exploration for people who like road hierarchy, street grids, rivers, grades, coordinates, and urban form.
 
 ## Status
 
-Initial scaffold. The app builds a static Rue-authored interface and includes:
+The app is a static Rue interface with vanilla JavaScript state. It includes:
 
-- City and route presets.
-- Auto Drive playback controls.
-- Speed control.
-- Saved discovery notes.
-- A provider boundary for Google Street View.
-- A built-in demo mode that works without an API key.
-
-Google Street View automation requires a Google Maps JavaScript API key with Street View coverage available for the selected route. The app does not commit or require a key for the demo mode.
+- A full-screen cartographic workspace with a right-aligned navigation bar.
+- A collapsible map-type selector controlled by the navbar chevron.
+- Search across roads, cities, neighborhoods, landmarks, and coordinates.
+- Curated demo routes for New Orleans, San Francisco, and Chicago.
+- Auto Drive, manual traversal, route history, and trip summaries.
+- Six exploration strategies: scenic, downtown, random, coastal, historic, and highway routing.
+- Detailed map telemetry: coordinates, road class, grid bearing, elevation, surface, grade, and river-mile context where relevant.
+- Saved discoveries with local persistence.
+- A Google Street View provider boundary with demo fallback.
+- A demo Guesser mode with map placement, scoring, reveals, and round summaries.
 
 ## Commands
 
 ```bash
 npm run build
 npm run dev
+npm test
+npm run test:browser
+npm run check
 ```
 
-`npm run dev` builds the Rue app and serves `out/` at `http://localhost:4174`.
+`npm run dev` builds the app and serves `out/` at `http://127.0.0.1:4174`.
 
-## Google Street View Mode
+`npm run test:browser` uses Playwright. If Playwright was just installed, run:
 
-The UI lets you paste a Google Maps API key locally. The key is stored only in browser `localStorage` for convenience.
+```bash
+npx playwright install chromium
+```
 
-When Google mode is loaded, Auto Drive advances by following Street View panorama links instead of requiring repeated manual clicks.
+## Rue Imports
+
+The app uses intended Rue module syntax now:
+
+```rue
+import { Navigation } from "./Navigation.rue"
+export component Navigation() { ... }
+```
+
+`builder.js` resolves those `.rue` imports into dependency order before handing source to the current Rue compiler. That keeps the app source aligned with the intended language design while native Rue import support can mature later.
 
 ## Project Structure
 
 ```text
-web/main.rue        Rue-authored app shell and styling
-public/app.js       Street View/demo driving controller
-scripts/build.mjs   RueRouter static build and public asset copy
-scripts/serve.mjs   Small local static server
-out/                Generated static app output
+src/main.rue              Rue entrypoint
+src/Navigation.rue        Navbar and chevron map-selector toggle
+src/Shell.rue             App shell and workspace mounting
+src/Panels.rue            Route, telemetry, discovery, and trip panels
+src/Guesser.rue           Demo location guessing workspace
+src/data/                 Curated routes, strategies, and guesser rounds
+src/lib/                  Storage and telemetry helpers
+src/providers/            Street View provider boundary
+src/styles/               Static responsive and accessibility CSS
+tests/                    Node and Playwright tests
+out/                      Generated build output, ignored by Git
 ```
 
-## Direction
+## Google Street View Mode
 
-This should grow into an easier map exploration tool:
-
-- Better route planning by city, neighborhood, road type, and scenery.
-- Street View autopilot that follows roads smoothly and avoids jumps.
-- Saved discoveries with notes and coordinates.
-- Exploration modes such as scenic, downtown, coastal, historic, and random.
-- Rue-driven UI experiments that keep the product usable while pushing Rue in a real app.
+The UI lets you paste a Google Maps API key locally. The key is stored only in browser `localStorage`. Demo mode works without a key and remains available when Google Street View fails, has no linked panorama, or the key is missing.
 
 ## Safety And API Notes
 
 - Do not commit API keys.
-- Keep Google provider code isolated from the Rue UI shell.
-- Do not claim full autonomous driving behavior; this is a Street View navigation aid.
+- Keep provider code isolated from Rue UI components.
+- Treat Auto Drive as a Street View navigation aid, not autonomous driving.
 - Respect Google Maps Platform terms and quota limits before public deployment.
-# city-explorer
